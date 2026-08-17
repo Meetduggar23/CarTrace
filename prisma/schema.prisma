@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../backend/src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String          @id @default(cuid())
+  name         String
+  email        String          @unique
+  passwordHash String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  vehicles     Vehicle[]
+  searches     SearchHistory[]
+
+  @@map("users")
+}
+
+model Vehicle {
+  id                 String   @id @default(cuid())
+  userId             String
+  registrationNumber String?
+  vin                String?
+  manufacturer       String?
+  model              String?
+  modelYear          String?
+  fuelType           String?
+  customName         String?
+  vehicleData        Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([registrationNumber])
+  @@index([vin])
+  @@map("vehicles")
+}
+
+model SearchHistory {
+  id         String   @id @default(cuid())
+  userId     String
+  lookupType String
+  query      String
+  result     Json?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([query])
+  @@map("search_history")
+}
+
+model Rto {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  stateCode  String
+  state      String
+  city       String
+  officeName String
+  location   String?
+  contact    Json?
+  services   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([state])
+  @@index([stateCode])
+  @@index([city])
+  @@map("rtos")
+}
