@@ -25,14 +25,6 @@ vi.mock("@/services/auth", () => ({
   }),
 }));
 
-vi.mock("@/services/theme", () => ({
-  useTheme: () => ({
-    theme: "dark",
-    resolvedTheme: "dark",
-    setTheme: vi.fn(),
-  }),
-}));
-
 import { Navbar } from "./Navbar";
 
 describe("Navbar", () => {

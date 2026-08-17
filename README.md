@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo/logo.png" alt="AutoCheck logo" width="360" />
+</p>
+
 # AutoCheck
 
 **Vehicle Information & Registration Checker**
@@ -25,7 +29,7 @@ responsive dashboard.
 - **Vehicle comparison** — side-by-side comparison of two vehicles
 - **Saved vehicles & search history** — persistent for logged-in users, local
   history for guests
-- **Theming** — dark (default), light and system themes
+- **Single premium theme** — black & gold automotive palette (black `#0A0A0A`, gold `#D4AF37`, deep burgundy `#5A0F1B`, warm ivory `#F5F0E6`) with no theme toggle
 - **Provider abstraction** — swap in additional vehicle-data providers without
   rewriting the application
 - **Mock mode** — run the entire app without any API credentials (development only,

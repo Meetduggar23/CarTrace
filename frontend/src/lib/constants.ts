@@ -25,7 +25,6 @@ export const EXAMPLE_VINS = [
 
 export const GUEST_HISTORY_KEY = "autocheck-guest-history";
 export const AUTH_TOKEN_KEY = "autocheck-token";
-export const THEME_KEY = "autocheck-theme";
 export const COMPARE_KEY = "autocheck-compare";
 
 export const GUEST_HISTORY_LIMIT = 10;

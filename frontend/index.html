@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0B0F14" />
+    <meta name="theme-color" content="#0A0A0A" />
     <meta
       name="description"
       content="AutoCheck — check vehicle specifications, registration information and available vehicle records in one place. VIN decoding and RTO directory."
@@ -26,19 +26,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script>
-      // Apply saved theme before first paint to avoid flash.
-      (function () {
-        try {
-          var stored = localStorage.getItem("autocheck-theme");
-          var dark =
-            stored === "dark" ||
-            (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches) ||
-            stored === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-          document.documentElement.classList.toggle("dark", dark);
-        } catch (e) {}
-      })();
-    </script>
     <style>
       /* Instant branded loading screen shown until React mounts. */
       #boot-splash {
@@ -50,11 +37,8 @@
         align-items: center;
         justify-content: center;
         gap: 24px;
-        background: #0b0f14;
+        background: #0a0a0a;
         transition: opacity 0.4s ease;
-      }
-      html:not(.dark) #boot-splash {
-        background: #f8fafc;
       }
       #boot-splash img {
         width: 210px;
@@ -65,17 +49,14 @@
         width: 26px;
         height: 26px;
         border-radius: 9999px;
-        border: 2.5px solid rgba(59, 130, 246, 0.25);
-        border-top-color: #3b82f6;
+        border: 2.5px solid rgba(212, 175, 55, 0.25);
+        border-top-color: #d4af37;
         animation: splash-spin 0.9s linear infinite;
       }
       #boot-splash .splash-label {
         font: 500 13px/1.4 Inter, system-ui, -apple-system, sans-serif;
         letter-spacing: 0.02em;
-        color: #94a3b8;
-      }
-      html:not(.dark) #boot-splash .splash-label {
-        color: #64748b;
+        color: #b3a887;
       }
       #boot-splash.boot-splash--fade {
         opacity: 0;

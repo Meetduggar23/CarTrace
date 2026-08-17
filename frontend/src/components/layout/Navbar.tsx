@@ -3,21 +3,17 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
-  Github,
   Heart,
   History,
   LogOut,
   Menu,
-  Moon,
   Search,
-  Sun,
   X,
 } from "lucide-react";
 import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/common/Logo";
 import { useAuth } from "@/services/auth";
-import { useTheme } from "@/services/theme";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,7 +35,6 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
-  const { theme, setTheme, resolvedTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -105,34 +100,6 @@ export function Navbar() {
           >
             <Search className="h-4 w-4" />
           </Button>
-
-          {/* Theme */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Change theme">
-                {resolvedTheme === "dark" ? (
-                  <Moon className="h-4 w-4" />
-                ) : (
-                  <Sun className="h-4 w-4" />
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Theme</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
-                <Moon className="h-4 w-4" /> Dark
-                {theme === "dark" && <span className="ml-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("light")}>
-                <Sun className="h-4 w-4" /> Light
-                {theme === "light" && <span className="ml-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Github className="h-4 w-4" /> System
-                {theme === "system" && <span className="ml-auto text-primary">✓</span>}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Auth */}
           {isAuthenticated && user ? (
