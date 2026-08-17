@@ -2,8 +2,6 @@
   <img src="logo/logo.png" alt="AutoCheck logo" width="360" />
 </p>
 
-# AutoCheck
-
 **Vehicle Information & Registration Checker**
 
 AutoCheck is a modern vehicle-information platform. Enter a vehicle registration
