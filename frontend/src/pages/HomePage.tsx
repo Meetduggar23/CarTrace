@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 import { Accordion } from "@/components/ui/accordion";
 import { Seo } from "@/components/common/Seo";
+import { useAuth } from "@/services/auth";
 import { HomeSearch } from "@/components/search/HomeSearch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -145,7 +147,31 @@ const INFO_CATEGORIES = [
   "RTO Information",
 ];
 
+const JUST_REGISTERED_KEY = "cartrace-just-registered";
+
 export function HomePage() {
+  const { isAuthenticated, user } = useAuth();
+  const [justRegistered, setJustRegistered] = useState(false);
+
+  // Greet a brand-new user once after they finish signup.
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(JUST_REGISTERED_KEY)) {
+        setJustRegistered(true);
+        sessionStorage.removeItem(JUST_REGISTERED_KEY);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const firstName = user?.name.trim().split(/\s+/)[0] ?? "";
+  const heroKicker = isAuthenticated && user
+    ? justRegistered
+      ? `Welcome to CarTrace, ${firstName}.`
+      : `Welcome back, ${firstName}.`
+    : "CarTrace — Trace It. Know It. Trust It.";
+
   return (
     <div>
       <Seo />
@@ -173,11 +199,12 @@ export function HomePage() {
             className="mx-auto max-w-3xl text-center"
           >
             <motion.p
+              key={heroKicker}
               variants={fadeUp}
               custom={0}
               className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[hsl(var(--on-dark-soft))]"
             >
-              CarTrace — Trace It. Know It. Trust It.
+              {heroKicker}
             </motion.p>
             <motion.h1
               variants={fadeUp}

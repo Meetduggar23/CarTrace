@@ -313,6 +313,12 @@ export function Navbar() {
               }
               triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
               align="right"
+              header={
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                </div>
+              }
               items={[
                 { label: "My Profile", to: "/profile" },
                 { label: "Saved Vehicles", to: "/saved" },

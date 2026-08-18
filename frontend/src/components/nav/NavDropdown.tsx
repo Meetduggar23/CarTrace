@@ -21,6 +21,8 @@ interface NavDropdownProps {
   trigger?: React.ReactNode;
   /** Accessible name for icon-only triggers. */
   ariaLabel?: string;
+  /** Optional non-interactive header rendered above the items (e.g. the user's name). */
+  header?: React.ReactNode;
   className?: string;
   triggerClassName?: string;
   align?: "left" | "right";
@@ -41,6 +43,7 @@ export function NavDropdown({
   active = false,
   trigger,
   ariaLabel,
+  header,
   className,
   triggerClassName,
   align = "left",
@@ -177,6 +180,11 @@ export function NavDropdown({
                 align === "right" && "w-52"
               )}
             >
+              {header && (
+                <div className="border-b border-border px-3 pb-2 pt-1.5">
+                  {header}
+                </div>
+              )}
               {items.map((item, i) => {
                 const classes = cn(
                   "flex w-full items-start justify-between gap-3 rounded-md px-3 py-2.5 text-left text-sm transition-colors",
