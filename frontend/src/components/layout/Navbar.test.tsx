@@ -40,20 +40,16 @@ vi.mock("@/services/auth", () => ({
 import { Navbar } from "./Navbar";
 
 describe("Navbar", () => {
-  it("renders brand, dropdown triggers and feature bar links", () => {
+  it("renders brand, dropdown triggers and primary links", () => {
     render(<Navbar />);
     expect(screen.getByText("AutoCheck")).toBeInTheDocument();
-    // Top-level dropdown triggers
+    // Top-level dropdown triggers + primary links
     expect(screen.getByRole("button", { name: /vehicle info/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /buy car/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /insurance/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /more/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /contact us/i })).toBeInTheDocument();
-    // Feature bar links (rendered twice: desktop grid + mobile scroller)
-    expect(screen.getAllByRole("link", { name: /rc details/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: /challan search/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: /car insurance/i }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: /fastag/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("textbox", { name: /search vehicle/i })).toBeInTheDocument();
   });
 
   it("opens a dropdown and shows its items", async () => {

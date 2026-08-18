@@ -15,7 +15,6 @@ import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import {
   BUY_CAR,
-  FEATURES,
   INSURANCE,
   LOCATIONS,
   LOCATION_STORAGE_KEY,
@@ -183,7 +182,31 @@ export function Navbar() {
 
           {/* Desktop dropdowns */}
           <div className="hidden items-center lg:flex">
-            {DROPDOWN_GROUPS.map((group) => (
+            {DROPDOWN_GROUPS.slice(0, 2).map((group) => (
+              <NavDropdown
+                key={group.label}
+                label={group.label}
+                items={group.items}
+                active={pathActive(
+                  pathname,
+                  group.items.map((i) => i.to)
+                )}
+              />
+            ))}
+            <NavLink
+              to="/new-cars"
+              className={({ isActive }) =>
+                cn(
+                  "inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-white/5 text-primary"
+                    : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
+                )
+              }
+            >
+              New Car
+            </NavLink>
+            {DROPDOWN_GROUPS.slice(2).map((group) => (
               <NavDropdown
                 key={group.label}
                 label={group.label}
@@ -271,74 +294,25 @@ export function Navbar() {
         </nav>
       </div>
 
-      {/* ============ Row 2: mobile search ============ */}
-      <div className="border-b border-white/10 px-4 py-2 lg:hidden">
-        <NavSearch onSubmitted={() => setMobileOpen(false)} />
-      </div>
-
-      {/* ============ Row 3: feature bar ============ */}
-      <div className="hidden border-b border-white/10 lg:block">
-        <nav
-          className="mx-auto grid max-w-7xl grid-cols-8 px-4 sm:px-6 lg:px-8"
-          aria-label="Vehicle features"
-        >
-          {FEATURES.map((feature) => (
-            <NavLink
-              key={feature.href}
-              to={feature.href}
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center justify-center gap-2 border-b-2 py-3 text-sm font-medium transition-colors",
-                  isActive
-                    ? "border-primary bg-white/5 text-primary"
-                    : "border-transparent text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
-                )
-              }
-            >
-              <feature.icon className="h-4 w-4" aria-hidden />
-              {feature.label}
-            </NavLink>
-          ))}
-        </nav>
-      </div>
-
-      {/* Mobile feature bar — horizontally scrollable, scrollbar hidden */}
-      <div className="overflow-x-auto border-b border-white/10 lg:hidden">
-        <nav
-          className="flex w-max min-w-full gap-1 px-3 py-2"
-          aria-label="Vehicle features"
-        >
-          {FEATURES.map((feature) => (
-            <NavLink
-              key={feature.href}
-              to={feature.href}
-              className={({ isActive }) =>
-                cn(
-                  "flex shrink-0 flex-col items-center gap-1 rounded-lg px-4 py-2 text-xs font-medium transition-colors",
-                  isActive
-                    ? "bg-white/10 text-primary"
-                    : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
-                )
-              }
-            >
-              <feature.icon className="h-5 w-5" aria-hidden />
-              {feature.label}
-            </NavLink>
-          ))}
-        </nav>
-      </div>
-
       {/* ============ Mobile menu panel ============ */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden border-b border-white/10 bg-[hsl(var(--surface-dark))] lg:hidden"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="border-b border-white/10 bg-[hsl(var(--surface-dark))] lg:hidden"
           >
             <div className="flex flex-col gap-5 px-4 py-5">
+              {/* Search (mobile only) */}
+              <div>
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
+                  Search vehicle
+                </p>
+                <NavSearch onSubmitted={() => setMobileOpen(false)} />
+              </div>
+
               {/* Location */}
               <div>
                 <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
@@ -391,8 +365,21 @@ export function Navbar() {
                 </div>
               ))}
 
-              {/* Contact + auth */}
+              {/* New Car + Contact + auth */}
               <div className="border-t border-white/10 pt-4">
+                <NavLink
+                  to="/new-cars"
+                  className={({ isActive }) =>
+                    cn(
+                      "block rounded-md px-2 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-white/10 text-primary"
+                        : "text-[hsl(var(--on-dark))] hover:bg-white/5 hover:text-primary"
+                    )
+                  }
+                >
+                  New Car
+                </NavLink>
                 <NavLink
                   to="/contact"
                   className={({ isActive }) =>

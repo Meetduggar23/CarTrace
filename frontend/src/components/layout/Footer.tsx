@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/common/Logo";
 import { SITE } from "@/lib/constants";
 
@@ -59,10 +58,7 @@ export function Footer() {
               Check vehicle specifications, registration information and available
               vehicle records in one place.
             </p>
-            <p className="mt-4 flex items-center gap-2 text-xs text-[hsl(var(--on-dark-soft))]">
-              <ShieldCheck className="h-4 w-4" />
-              Data powered by supported third-party/public APIs.
-            </p>
+
           </div>
 
           {COLUMNS.map((col) => (
@@ -87,8 +83,8 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-[hsl(var(--on-dark)/0.12)] pt-6">
-          <p className="text-xs leading-relaxed text-[hsl(var(--on-dark-soft))]">
-            All rights reserved by CarTrace 2025 made by duggar pvt ltd
+          <p className="text-center text-xs leading-relaxed text-[hsl(var(--on-dark-soft))]">
+            All rights reserved by CarTrace 2025 Made By Duggar Pvt Ltd
           </p>
         </div>
       </div>

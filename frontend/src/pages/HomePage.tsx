@@ -2,25 +2,27 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Bike,
   Bookmark,
   Car,
   CarFront,
   CheckCircle2,
-  ClipboardList,
+  CreditCard,
   Database,
-  FileSearch,
+  FileCheck2,
   FlaskConical,
+  Gavel,
   GitCompareArrows,
   HelpCircle,
-  Landmark,
   Lock,
   MapPin,
   ShieldCheck,
+  Sparkles,
+  Wrench,
 } from "lucide-react";
 import { Accordion } from "@/components/ui/accordion";
-import { Logo } from "@/components/common/Logo";
 import { Seo } from "@/components/common/Seo";
-import { SearchForm } from "@/components/search/SearchForm";
+import { HomeSearch } from "@/components/search/HomeSearch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,36 +40,76 @@ const fadeUp = {
 
 const LOOKUP_TYPES = [
   {
-    icon: CarFront,
+    icon: FileCheck2,
     image: "/images/inspection-automobile.jpg",
     alt: "Automobile being inspected in a workshop",
-    title: "Registration Lookup",
+    title: "RC Details",
     text: "Enter an Indian registration number to view available vehicle records.",
-    badge: "Where supported",
+    badge: "Registration",
+    href: "/vehicle",
   },
   {
-    icon: FileSearch,
-    image: "/images/car-mechanic.jpg",
-    alt: "Mechanic inspecting a car engine",
-    title: "VIN Decoder",
-    text: "Decode a 17-character VIN into manufacturer, model, year and specs.",
-    badge: "NHTSA vPIC",
+    icon: Gavel,
+    image: "/images/speedometer.jpg",
+    alt: "Car speedometer",
+    title: "Challan Search",
+    text: "Check traffic challans and outstanding violations for a vehicle.",
+    badge: "Challan",
+    href: "/challan",
   },
   {
-    icon: ClipboardList,
-    image: "/images/workshop-garage.jpg",
-    alt: "Vehicle workshop garage",
-    title: "Vehicle Specs",
-    text: "View manufacturer, model, engine, fuel and body information.",
-    badge: "Provider dependent",
+    icon: ShieldCheck,
+    image: "/images/car-insurance.jpg",
+    alt: "Car on the road",
+    title: "Car Insurance",
+    text: "Check insurance status and policy validity for your car.",
+    badge: "Insurance",
+    href: "/car-insurance",
   },
   {
-    icon: Landmark,
-    image: "/images/mechanic-inspection.jpg",
-    alt: "Mechanic carrying out a meticulous vehicle inspection",
-    title: "RTO Directory",
-    text: "Find RTO offices, codes and cities across India.",
-    badge: "Public data",
+    icon: Bike,
+    image: "/images/bike-insurance.jpg",
+    alt: "Motorcycle on the road",
+    title: "Bike Insurance",
+    text: "Check two-wheeler insurance status and validity.",
+    badge: "Insurance",
+    href: "/bike-insurance",
+  },
+  {
+    icon: Wrench,
+    image: "/images/service-history.jpg",
+    alt: "Brake disc being serviced in a workshop",
+    title: "Service History",
+    text: "Track service records and maintenance history.",
+    badge: "Service",
+    href: "/service-history",
+  },
+  {
+    icon: Sparkles,
+    image: "/images/new-car.jpg",
+    alt: "Brand-new car",
+    title: "New Car",
+    text: "Explore new cars and their specifications.",
+    badge: "New car",
+    href: "/new-cars",
+  },
+  {
+    icon: CarFront,
+    image: "/images/used-car.jpg",
+    alt: "Car available for sale",
+    title: "Used Car",
+    text: "Browse used cars and check their details before buying.",
+    badge: "Used car",
+    href: "/used-cars",
+  },
+  {
+    icon: CreditCard,
+    image: "/images/fastag.jpg",
+    alt: "Car dashboard with FASTag",
+    title: "FASTag",
+    text: "FASTag information, toll payments and vehicle linkage.",
+    badge: "FASTag",
+    href: "/fastag",
   },
 ];
 
@@ -108,7 +150,7 @@ export function HomePage() {
     <div>
       <Seo />
 
-      {/* Hero — dark band over the photo, cream body below (Anthropic rhythm) */}
+      {/* Hero — compact headline over the photo, search card floats below */}
       <section className="relative overflow-hidden bg-[hsl(var(--surface-dark))]">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -124,46 +166,42 @@ export function HomePage() {
               "radial-gradient(60rem 30rem at 50% -10%, hsl(var(--primary) / 0.18), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-16 sm:px-6 sm:pt-24 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 pb-36 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pb-44">
           <motion.div
             initial="hidden"
             animate="visible"
             className="mx-auto max-w-3xl text-center"
           >
-            <motion.div variants={fadeUp} custom={0} className="mb-6">
-              <Logo size="lg" className="opacity-95" />
-            </motion.div>
             <motion.h1
               variants={fadeUp}
-              custom={1}
-              className="font-display text-5xl font-medium leading-[1.05] tracking-tight text-[hsl(var(--on-dark))] sm:text-6xl lg:text-7xl"
+              custom={0}
+              className="font-display text-4xl font-medium leading-[1.05] tracking-tight text-[hsl(var(--on-dark))] sm:text-5xl lg:text-6xl"
             >
               Know Your <span className="text-gradient">Vehicle.</span>
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              custom={2}
-              className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-[hsl(var(--on-dark-soft))]"
+              custom={1}
+              className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[hsl(var(--on-dark-soft))] sm:text-lg"
             >
-              Check vehicle specifications, registration information and
-              available vehicle records in one place.
+              Enter your vehicle number, pick a service, and get the available
+              vehicle information — specifications, registration and more.
             </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.35 }}
-            className="mx-auto mt-10 max-w-2xl rounded-md border border-border bg-card/70 p-5 backdrop-blur-xl sm:p-6"
-          >
-            <SearchForm size="lg" autoFocus />
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              Only publicly available information supported by the selected data
-              provider is displayed.
-            </p>
           </motion.div>
         </div>
       </section>
+
+      {/* Floating search card — overlaps the bottom of the hero */}
+      <div className="relative z-10 mx-auto -mt-24 max-w-4xl px-4 sm:-mt-28 sm:px-6 lg:-mt-32 lg:max-w-5xl lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="rounded-2xl border border-border bg-white p-5 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.45)] sm:p-6 lg:p-7"
+        >
+          <HomeSearch />
+        </motion.div>
+      </div>
 
       {/* Lookup types */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" aria-labelledby="lookup-types">
@@ -189,26 +227,28 @@ export function HomePage() {
         >
           {LOOKUP_TYPES.map((item, i) => (
             <motion.div key={item.title} variants={fadeUp} custom={i}>
-              <Card className="h-full overflow-hidden transition-colors hover:border-primary/40">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.alt}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <CardContent className="p-5">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/10">
-                    <item.icon className="h-[1.375rem] w-[1.375rem] text-primary" aria-hidden />
+              <Link to={item.href} className="block h-full">
+                <Card className="h-full overflow-hidden rounded-none transition-colors hover:border-primary/40">
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.alt}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                  <h3 className="mt-4 font-display text-xl font-medium tracking-tight">{item.title}</h3>
-                  <p className="mt-1.5 text-sm text-muted-foreground">{item.text}</p>
-                  <Badge variant="muted" className="mt-3">
-                    {item.badge}
-                  </Badge>
-                </CardContent>
-              </Card>
+                  <CardContent className="p-5">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-none bg-primary/10">
+                      <item.icon className="h-[1.375rem] w-[1.375rem] text-primary" aria-hidden />
+                    </div>
+                    <h3 className="mt-4 font-display text-xl font-medium tracking-tight">{item.title}</h3>
+                    <p className="mt-1.5 text-sm text-muted-foreground">{item.text}</p>
+                    <Badge variant="muted" className="mt-3">
+                      {item.badge}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </Link>
             </motion.div>
           ))}
         </motion.div>
