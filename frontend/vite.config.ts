@@ -4,6 +4,9 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react()],
+  // Load the shared repo-root .env (same file the backend reads) so the
+  // frontend picks up VITE_* variables from one place.
+  envDir: "..",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
