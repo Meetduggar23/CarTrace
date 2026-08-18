@@ -42,7 +42,7 @@ async function request<T>(
     }
     throw new ApiError(
       "NETWORK_ERROR",
-      "We couldn't reach the AutoCheck service. Check your connection and try again.",
+      "We couldn't reach the CarTrace service. Check your connection and try again.",
       0
     );
   }

@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
-  Heart,
   History,
   LogOut,
   MapPin,
   Menu,
+  Search,
   User,
   X,
 } from "lucide-react";
@@ -26,14 +26,7 @@ import { NavDropdown } from "@/components/nav/NavDropdown";
 import { NavSearch } from "@/components/nav/NavSearch";
 import { useAuth } from "@/services/auth";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 const DROPDOWN_GROUPS = [
   { label: "Vehicle Info", items: VEHICLE_INFO },
@@ -60,10 +53,20 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [location, setLocation] = useState<string>(readLocation);
   const [locationOpen, setLocationOpen] = useState(false);
+  const [cityFilter, setCityFilter] = useState("");
+  const headerRef = useRef<HTMLElement>(null);
+  const locationTimer = useRef<number | null>(null);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const locationHook = useLocation();
   const pathname = locationHook.pathname;
+
+  useEffect(
+    () => () => {
+      if (locationTimer.current) window.clearTimeout(locationTimer.current);
+    },
+    []
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -76,7 +79,28 @@ export function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
     setLocationOpen(false);
+    setCityFilter("");
   }, [pathname]);
+
+  // Close the mobile menu on outside click / Escape.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    function onPointerDown(e: PointerEvent) {
+      const target = e.target as Node;
+      if (headerRef.current && !headerRef.current.contains(target)) {
+        setMobileOpen(false);
+      }
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setMobileOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileOpen]);
 
   // Close the location dropdown on outside click / Escape.
   useEffect(() => {
@@ -88,7 +112,10 @@ export function Navbar() {
       }
     }
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setLocationOpen(false);
+      if (e.key === "Escape") {
+        setLocationOpen(false);
+        setCityFilter("");
+      }
     }
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
@@ -97,6 +124,15 @@ export function Navbar() {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [locationOpen]);
+
+  function openLocation() {
+    if (locationTimer.current) window.clearTimeout(locationTimer.current);
+    setLocationOpen(true);
+  }
+  function closeLocationSoon() {
+    if (locationTimer.current) window.clearTimeout(locationTimer.current);
+    locationTimer.current = window.setTimeout(() => setLocationOpen(false), 200);
+  }
 
   function chooseLocation(label: string) {
     setLocation(label);
@@ -110,6 +146,7 @@ export function Navbar() {
 
   return (
     <header
+      ref={headerRef}
       className={cn(
         "sticky top-0 z-50 w-full border-b bg-[hsl(var(--surface-dark))] text-[hsl(var(--on-dark))] transition-shadow duration-300",
         scrolled && "shadow-lg"
@@ -128,7 +165,12 @@ export function Navbar() {
           </Link>
 
           {/* Location selector */}
-          <div id="location-selector" className="relative hidden lg:block">
+          <div
+            id="location-selector"
+            className="relative hidden xl:block"
+            onMouseEnter={openLocation}
+            onMouseLeave={closeLocationSoon}
+          >
             <button
               type="button"
               aria-haspopup="listbox"
@@ -149,33 +191,54 @@ export function Navbar() {
             </button>
             <AnimatePresence>
               {locationOpen && (
-                <motion.ul
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.15 }}
-                  role="listbox"
-                  aria-label="Select location"
-                  className="absolute left-0 top-full z-50 mt-2 max-h-72 w-52 overflow-y-auto rounded-lg border border-border bg-popover p-1.5 text-popover-foreground shadow-lg"
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
+                  className="absolute left-0 top-full z-50 pt-2"
                 >
-                  {LOCATIONS.map((loc) => (
-                    <li key={loc.label}>
-                      <button
-                        type="button"
-                        role="option"
-                        aria-selected={location === loc.label}
-                        onClick={() => chooseLocation(loc.label)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 hover:text-primary",
-                          location === loc.label && "bg-primary/10 font-medium text-primary"
-                        )}
-                      >
-                        <MapPin className="h-3.5 w-3.5" aria-hidden />
-                        {loc.label}
-                      </button>
-                    </li>
-                  ))}
-                </motion.ul>
+                  <div className="w-56 rounded-lg border border-border bg-popover p-1.5 text-popover-foreground shadow-lg">
+                    <div className="relative">
+                      <Search
+                        className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+                        aria-hidden
+                      />
+                      <Input
+                        value={cityFilter}
+                        onChange={(e) => setCityFilter(e.target.value)}
+                        placeholder="Search city"
+                        aria-label="Search city"
+                        className="h-8 pl-8 text-sm"
+                      />
+                    </div>
+                    <ul
+                      role="listbox"
+                      aria-label="Select location"
+                      className="mt-1.5 max-h-56 overflow-y-auto"
+                    >
+                      {LOCATIONS.filter((loc) =>
+                        loc.label.toLowerCase().includes(cityFilter.trim().toLowerCase())
+                      ).map((loc) => (
+                        <li key={loc.label}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={location === loc.label}
+                            onClick={() => chooseLocation(loc.label)}
+                            className={cn(
+                              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 hover:text-primary",
+                              location === loc.label && "bg-primary/10 font-medium text-primary"
+                            )}
+                          >
+                            <MapPin className="h-3.5 w-3.5" aria-hidden />
+                            {loc.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
@@ -221,7 +284,7 @@ export function Navbar() {
               to="/contact"
               className={({ isActive }) =>
                 cn(
-                  "inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "hidden items-center rounded-md px-3 py-2 text-sm font-medium transition-colors xl:inline-flex",
                   isActive
                     ? "bg-white/5 text-primary"
                     : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
@@ -232,52 +295,44 @@ export function Navbar() {
             </NavLink>
           </div>
 
-          {/* Desktop search */}
-          <NavSearch className="ml-auto hidden w-64 lg:block" />
+          {/* Desktop search — expands on hover, collapses on leave */}
+          <NavSearch
+            mode="icon"
+            className="ml-auto hidden lg:block"
+          />
 
-          {/* User / login */}
+          {/* User / account menu — opens on hover, same as other dropdowns */}
           {isAuthenticated && user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="ml-1 hidden h-9 w-9 rounded-full p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
-                  aria-label="Account menu"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
-                    {user.name.charAt(0).toUpperCase()}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
-                <DropdownMenuLabel className="pt-0 font-normal text-muted-foreground">
-                  {user.email}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/saved")}>
-                  <Heart className="h-4 w-4" /> Saved Vehicles
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/history")}>
-                  <History className="h-4 w-4" /> Search History
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
-                  <LogOut className="h-4 w-4" /> Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <NavDropdown
+              label="Account"
+              ariaLabel="Account menu"
+              trigger={
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              }
+              triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
+              align="right"
+              items={[
+                { label: "My Profile", to: "/profile" },
+                { label: "Saved Vehicles", to: "/saved" },
+                { label: "Search History", to: "/history" },
+                { label: "Settings", to: "/settings" },
+                { label: "Log out", onSelect: logout },
+              ]}
+            />
           ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-1 h-9 w-9 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
-              aria-label="Log in"
-              title="Log in"
-              onClick={() => navigate("/login")}
-            >
-              <User className="h-5 w-5" />
-            </Button>
+            <NavDropdown
+              label="Account"
+              ariaLabel="Account menu"
+              trigger={<User className="h-5 w-5" />}
+              triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
+              align="right"
+              items={[
+                { label: "Log in", to: "/login" },
+                { label: "Sign up", to: "/signup" },
+              ]}
+            />
           )}
 
           {/* Mobile menu toggle */}

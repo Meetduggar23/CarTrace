@@ -33,7 +33,9 @@ export function RtoFilterPage({ filter }: { filter: "state" | "city" }) {
         <ArrowLeft className="h-4 w-4" aria-hidden /> RTO directory
       </Link>
 
-      <h1 className="mt-4 font-display text-2xl font-bold sm:text-3xl">{title}</h1>
+      <p className="kicker mt-6">CarTrace — See Beyond the Plate.</p>
+
+      <h1 className="mt-3 font-display text-2xl font-bold sm:text-3xl">{title}</h1>
 
       <div className="mt-8">
         {query.isLoading ? (

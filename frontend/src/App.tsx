@@ -82,6 +82,12 @@ const ContactPage = lazy(() =>
 const HelpPage = lazy(() =>
   import("@/pages/FeaturePages").then((m) => ({ default: m.HelpPage }))
 );
+const ProfilePage = lazy(() =>
+  import("@/pages/ProfilePage").then((m) => ({ default: m.ProfilePage }))
+);
+const SettingsPage = lazy(() =>
+  import("@/pages/SettingsPage").then((m) => ({ default: m.SettingsPage }))
+);
 
 function PageLoader() {
   return <LoadingScreen />;
@@ -297,6 +303,22 @@ export function App() {
           element={
             <Suspense fallback={<PageLoader />}>
               <HelpPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <ProfilePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="settings"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <SettingsPage />
             </Suspense>
           }
         />

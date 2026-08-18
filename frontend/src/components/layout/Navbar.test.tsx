@@ -42,7 +42,7 @@ import { Navbar } from "./Navbar";
 describe("Navbar", () => {
   it("renders brand, dropdown triggers and primary links", () => {
     render(<Navbar />);
-    expect(screen.getByText("AutoCheck")).toBeInTheDocument();
+    expect(screen.getByText("CarTrace")).toBeInTheDocument();
     // Top-level dropdown triggers + primary links
     expect(screen.getByRole("button", { name: /vehicle info/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /buy car/i })).toBeInTheDocument();
@@ -50,14 +50,16 @@ describe("Navbar", () => {
     expect(screen.getByRole("button", { name: /more/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /contact us/i })).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: /search vehicle/i })).toBeInTheDocument();
+    // Account menu trigger for guests
+    expect(screen.getByRole("button", { name: /account menu/i })).toBeInTheDocument();
   });
 
-  it("opens a dropdown and shows its items", async () => {
+  it("opens a dropdown on hover and shows its items", async () => {
     const user = userEvent.setup();
     render(<Navbar />);
-    await user.click(screen.getByRole("button", { name: /buy car/i }));
+    await user.hover(screen.getByRole("button", { name: /buy car/i }));
     expect(await screen.findByRole("menuitem", { name: /compare cars/i })).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: /car specifications/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /used cars/i })).toBeInTheDocument();
   });
 
   it("opens the mobile menu via the hamburger button", async () => {
@@ -65,16 +67,19 @@ describe("Navbar", () => {
     render(<Navbar />);
     const toggle = screen.getByRole("button", { name: /open menu/i });
     await user.click(toggle);
-    // Guest mobile menu shows login/signup actions (desktop login icon
-    // also exists in the DOM, so use getAllByRole).
+    // Guest mobile menu shows login/signup actions (the desktop account
+    // menu also renders them once opened, so use getAllByRole).
     expect(screen.getAllByRole("button", { name: /log in/i }).length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: /sign up/i })).toBeInTheDocument();
     // Close again
     await user.click(screen.getByRole("button", { name: /close menu/i }));
   });
 
-  it("provides a login entry for guests", () => {
+  it("opens the account menu on hover and shows guest actions", async () => {
+    const user = userEvent.setup();
     render(<Navbar />);
-    expect(screen.getByRole("button", { name: /log in/i })).toBeInTheDocument();
+    await user.hover(screen.getByRole("button", { name: /account menu/i }));
+    expect(await screen.findByRole("menuitem", { name: /log in/i })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /sign up/i })).toBeInTheDocument();
   });
 });

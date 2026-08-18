@@ -1,22 +1,26 @@
 import { Seo } from "@/components/common/Seo";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
-import { SITE } from "@/lib/constants";
+import { SITE, TAGLINES } from "@/lib/constants";
 
 export function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <Seo
         title="About & Disclaimer"
-        description="About AutoCheck, its data sources and the legal disclaimer."
+        description="About CarTrace, its data sources and the legal disclaimer."
         path="/about"
       />
       <PageHeader
         title="About & Disclaimer"
-        description={`How ${SITE.name} works and what you should know about the data it shows.`}
+        description={`${TAGLINES.primary} ${SITE.name} is the vehicle-information platform that traces the available story behind every plate.`}
       />
 
-      <div className="mt-8 space-y-6">
+      <p className="kicker mt-6 text-center">
+        {SITE.name} — {TAGLINES.primary}
+      </p>
+
+      <div className="mt-6 space-y-6">
         <Card>
           <CardContent className="space-y-4 p-6">
             <h2 className="font-display text-lg font-semibold">What this is</h2>
@@ -63,6 +67,19 @@ export function AboutPage() {
                 Not affiliated with CarInfo or any vehicle-information product.
               </li>
             </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="space-y-4 p-6">
+            <blockquote className="border-l-2 border-primary/40 pl-4 font-display text-lg font-medium">
+              {SITE.name} — {TAGLINES.trace}
+            </blockquote>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Every vehicle you trace leaves a record behind it — our job is to
+              surface the publicly available part of that record, clearly and
+              honestly, so you can make confident decisions.
+            </p>
           </CardContent>
         </Card>
 

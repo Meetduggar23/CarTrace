@@ -6,7 +6,7 @@ import { SITE } from "@/lib/constants";
 export function PrivacyPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-      <Seo title="Privacy" description="How AutoCheck handles your data." path="/privacy" />
+      <Seo title="Privacy" description="How CarTrace handles your data." path="/privacy" />
       <PageHeader title="Privacy Policy" description={`How ${SITE.name} handles your data.`} />
 
       <div className="mt-8 space-y-6">

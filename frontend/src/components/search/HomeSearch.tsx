@@ -21,7 +21,6 @@ const FORM_BY_HREF: Record<string, ServiceForm> = {
   "/car-insurance": { kind: "reg", button: "Check Insurance", target: "/car-insurance" },
   "/bike-insurance": { kind: "reg", button: "Check Insurance", target: "/bike-insurance" },
   "/service-history": { kind: "reg", button: "Check Service History", target: "/service-history" },
-  "/new-cars": { kind: "text", button: "Search Cars", target: "/new-cars", placeholder: "Search new cars" },
   "/used-cars": { kind: "text", button: "Search Cars", target: "/used-cars", placeholder: "Search used cars" },
   "/fastag": { kind: "reg", button: "Check FASTag", target: "/fastag" },
 };
@@ -46,9 +45,17 @@ export function HomeSearch() {
 
   return (
     <div>
-      {/* Service selector */}
-      <div role="tablist" aria-label="Vehicle services" className="overflow-x-auto">
-        <div className="flex min-w-max items-stretch gap-1 border-b border-border">
+      <p className="kicker mb-3 text-center sm:text-left">
+        CarTrace — Trace It. Know It. Trust It.
+      </p>
+      {/* Service selector — contained row; distributes equally when it fits,
+          scrolls horizontally (scrollbar hidden) inside the card when it doesn't */}
+      <div
+        role="tablist"
+        aria-label="Vehicle services"
+        className="w-full max-w-full overflow-x-auto px-6"
+      >
+        <div className="flex min-w-full items-stretch border-b border-border">
           {FEATURES.map((feature, i) => {
             const isActive = active === feature.href;
             return (
@@ -82,14 +89,14 @@ export function HomeSearch() {
                   }
                 }}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 border-b-2 px-2.5 py-3 text-sm font-medium transition-colors lg:px-3.5",
+                  "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-2.5 py-3 text-sm font-medium transition-colors",
                   isActive
                     ? "border-primary bg-primary/5 text-primary"
                     : "border-transparent text-muted-foreground hover:bg-primary/5 hover:text-foreground"
                 )}
               >
                 <feature.icon
-                  className={cn("h-4 w-4", isActive ? "text-primary" : "text-muted-foreground")}
+                  className={cn("h-4 w-4 shrink-0", isActive ? "text-primary" : "text-muted-foreground")}
                   aria-hidden
                 />
                 {feature.label}
@@ -123,7 +130,7 @@ export function HomeSearch() {
 function RcForm() {
   return (
     <div>
-      <SearchForm size="lg" />
+      <SearchForm size="lg" placeholder="Enter vehicle registration number" />
       <p className="mt-4 text-center text-xs text-muted-foreground">
         Only publicly available information supported by the selected data provider is
         displayed.

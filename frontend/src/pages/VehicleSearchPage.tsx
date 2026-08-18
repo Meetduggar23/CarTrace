@@ -29,7 +29,11 @@ export function VehicleSearchPage() {
         description="Enter a registration number or a 17-character VIN to check publicly available vehicle information."
       />
 
-      <div className="mt-8">
+      <p className="kicker mt-6 text-center">
+        CarTrace — Trace It. Know It. Trust It.
+      </p>
+
+      <div className="mt-4">
         <SearchForm />
       </div>
 

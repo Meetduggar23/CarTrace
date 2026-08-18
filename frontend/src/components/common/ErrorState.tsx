@@ -48,7 +48,7 @@ const ERROR_TEMPLATES: Partial<
     icon: WifiOff,
     title: "Connection problem",
     fallback:
-      "We couldn't reach the AutoCheck service. Check your connection and try again.",
+      "We couldn't reach the CarTrace service. Check your connection and try again.",
   },
   DATABASE_REQUIRED: {
     icon: TriangleAlert,

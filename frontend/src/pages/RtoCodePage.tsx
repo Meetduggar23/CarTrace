@@ -58,7 +58,9 @@ export function RtoCodePage() {
         <ArrowLeft className="h-4 w-4" aria-hidden /> RTO directory
       </Link>
 
-      <div className="mt-6 rounded-lg border border-border bg-card p-6 shadow-soft">
+      <p className="kicker mt-6">CarTrace — See Beyond the Plate.</p>
+
+      <div className="mt-4 rounded-lg border border-border bg-card p-6 shadow-soft">
         <div className="flex flex-wrap items-center gap-4">
           <span className="flex h-16 w-20 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 font-mono text-lg font-bold text-primary">
             {rto.code}

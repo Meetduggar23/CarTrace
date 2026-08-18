@@ -166,7 +166,7 @@ export function HomePage() {
               "radial-gradient(60rem 30rem at 50% -10%, hsl(var(--primary) / 0.18), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 pb-36 pt-14 sm:px-6 sm:pt-20 lg:px-8 lg:pb-44">
+        <div className="relative mx-auto max-w-7xl px-4 pb-32 pt-10 sm:px-6 sm:pt-14 sm:pb-36 lg:px-8 lg:pt-16 lg:pb-40">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -177,27 +177,27 @@ export function HomePage() {
               custom={0}
               className="font-display text-4xl font-medium leading-[1.05] tracking-tight text-[hsl(var(--on-dark))] sm:text-5xl lg:text-6xl"
             >
-              Know Your <span className="text-gradient">Vehicle.</span>
+              Every Vehicle Has a <span className="text-gradient">Story.</span>
             </motion.h1>
             <motion.p
               variants={fadeUp}
               custom={1}
               className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[hsl(var(--on-dark-soft))] sm:text-lg"
             >
-              Enter your vehicle number, pick a service, and get the available
-              vehicle information — specifications, registration and more.
+              Trace it, discover the available information, and make more informed
+              decisions about the vehicles that matter to you.
             </motion.p>
           </motion.div>
         </div>
       </section>
 
       {/* Floating search card — overlaps the bottom of the hero */}
-      <div className="relative z-10 mx-auto -mt-24 max-w-4xl px-4 sm:-mt-28 sm:px-6 lg:-mt-32 lg:max-w-5xl lg:px-8">
+      <div className="relative z-10 mx-auto -mt-20 w-[calc(100%-2.5rem)] max-w-[1000px] sm:-mt-24 lg:-mt-28">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="rounded-2xl border border-border bg-white p-5 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.45)] sm:p-6 lg:p-7"
+          className="rounded-[24px] border border-border bg-white p-5 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.4)] sm:p-7 lg:p-8"
         >
           <HomeSearch />
         </motion.div>
@@ -292,7 +292,7 @@ export function HomePage() {
             </h2>
             <p className="mt-3 max-w-md text-sm text-muted-foreground">
               Each section only appears when the selected provider actually
-              returns that data — {`AutoCheck`} never invents vehicle
+              returns that data — {`CarTrace`} never invents vehicle
               information.
             </p>
             <Link to="/vehicle">

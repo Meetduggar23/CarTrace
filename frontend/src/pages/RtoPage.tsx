@@ -215,7 +215,10 @@ export function RtoPage() {
             animate="visible"
             className="mx-auto mt-10 max-w-3xl text-center"
           >
-            <motion.div variants={fadeUp} custom={0}>
+            <motion.p variants={fadeUp} custom={0} className="kicker">
+              CarTrace — See Beyond the Plate.
+            </motion.p>
+            <motion.div variants={fadeUp} custom={1} className="mt-4">
               <Badge variant="secondary" className="gap-1.5 px-3 py-1">
                 <ShieldCheck className="h-3.5 w-3.5 text-success" aria-hidden />
                 RTO vehicle information — public data only
@@ -223,14 +226,14 @@ export function RtoPage() {
             </motion.div>
             <motion.h1
               variants={fadeUp}
-              custom={1}
+              custom={2}
               className="mt-5 font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl"
             >
               Check RTO vehicle information <span className="text-gradient">by number plate</span>
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              custom={2}
+              custom={3}
               className="mx-auto mt-4 max-w-xl text-base text-muted-foreground sm:text-lg"
             >
               Check vehicle information and registration details instantly, and
@@ -248,7 +251,7 @@ export function RtoPage() {
             <SearchForm size="lg" />
             <p className="mt-4 text-center text-xs text-muted-foreground">
               Only publicly available information supported by the selected data
-              provider is displayed. AutoCheck never fabricates vehicle records.
+              provider is displayed. CarTrace never fabricates vehicle records.
             </p>
           </motion.div>
 
@@ -461,7 +464,7 @@ export function RtoPage() {
               What details can you check online?
             </h3>
             <p className="mt-1.5 text-sm text-muted-foreground">
-              See the next section for the categories AutoCheck can surface —
+              See the next section for the categories CarTrace can surface —
               when the provider supplies them.
             </p>
             <a href="#details" className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">

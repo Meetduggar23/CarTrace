@@ -34,12 +34,12 @@ export function ProvidersPage() {
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
       <Seo
         title="Data Providers"
-        description="Status and capabilities of the vehicle data providers powering AutoCheck."
+        description="Status and capabilities of the vehicle data providers powering CarTrace."
         path="/providers"
       />
       <PageHeader
         title="Data Providers"
-        description="Which vehicle data providers power AutoCheck, their status and what each one supports."
+        description="Which vehicle data providers power CarTrace, their status and what each one supports."
       >
         <Button
           variant="outline"

@@ -3,7 +3,7 @@ interface VehicleIllustrationProps {
 }
 
 /**
- * Generic vehicle illustration. AutoCheck never fabricates a photograph of
+ * Generic vehicle illustration. CarTrace never fabricates a photograph of
  * a specific vehicle — when a provider returns no image we show this neutral
  * illustration instead.
  */

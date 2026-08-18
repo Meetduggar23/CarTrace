@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { History, Loader2, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { normalizeQuery, formatRegistration } from "@/lib/utils";
+import { cn, formatRegistration, normalizeQuery } from "@/lib/utils";
 import {
   detectLookupType,
   isValidRegistration,
@@ -21,21 +20,55 @@ interface NavSearchProps {
   className?: string;
   /** Called after a successful submit (e.g. close the mobile menu). */
   onSubmitted?: () => void;
+  /**
+   * "icon": collapsed to a search icon on desktop — expands on hover/focus and
+   * collapses when the pointer leaves the search area (unless focused).
+   * "inline": always-visible field (mobile menu).
+   */
+  mode?: "icon" | "inline";
 }
+
+const CLOSE_DELAY = 200;
 
 /**
  * Compact "Search Vehicle No." field for the navbar. Auto-detects registration
  * numbers vs VINs, validates, remembers recent searches and shows a loading
  * state while navigating to the result page.
  */
-export function NavSearch({ className, onSubmitted }: NavSearchProps) {
+export function NavSearch({
+  className,
+  onSubmitted,
+  mode = "inline",
+}: NavSearchProps) {
   const navigate = useNavigate();
   const wrapRef = useRef<HTMLDivElement>(null);
+  const focusedRef = useRef(false);
+  const closeTimer = useRef<number | null>(null);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showRecents, setShowRecents] = useState(false);
   const [recents, setRecents] = useState<GuestHistoryEntry[]>([]);
+  const [open, setOpen] = useState(mode === "inline");
+
+  function openField() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    setOpen(true);
+  }
+  function closeFieldSoon() {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => {
+      // Keep the field open while the user is typing / has keyboard focus.
+      if (focusedRef.current) return;
+      setOpen(false);
+    }, CLOSE_DELAY);
+  }
+  useEffect(
+    () => () => {
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    },
+    []
+  );
 
   // Close the recents/error popovers on outside click or Escape.
   useEffect(() => {
@@ -100,16 +133,35 @@ export function NavSearch({ className, onSubmitted }: NavSearchProps) {
   }
 
   function handleFocus() {
+    focusedRef.current = true;
+    openField();
     setRecents(getGuestHistory());
     setShowRecents(true);
   }
 
+  function handleBlur() {
+    focusedRef.current = false;
+    // Let a recent-search click (onMouseDown) finish before closing.
+    window.setTimeout(() => setShowRecents(false), 150);
+    closeFieldSoon();
+  }
+
+  const expanded = mode === "inline" || open;
+
   return (
-    <div ref={wrapRef} className={cn("relative", className)}>
+    <div
+      ref={wrapRef}
+      onMouseEnter={mode === "icon" ? openField : undefined}
+      onMouseLeave={mode === "icon" ? closeFieldSoon : undefined}
+      className={cn("relative", className)}
+    >
       <form onSubmit={handleSubmit} noValidate role="search">
         <div className="relative">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40"
+            className={cn(
+              "pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2",
+              expanded ? "text-white/40" : "text-[hsl(var(--on-dark-soft))]"
+            )}
             aria-hidden
           />
           <input
@@ -119,15 +171,18 @@ export function NavSearch({ className, onSubmitted }: NavSearchProps) {
               setError(null);
             }}
             onFocus={handleFocus}
-            onBlur={() => window.setTimeout(() => setShowRecents(false), 150)}
-            placeholder="Search by vehicle no."
+            onBlur={handleBlur}
+            placeholder={expanded ? "Search by vehicle number…" : ""}
             aria-label="Search vehicle by registration number or VIN"
             autoComplete="off"
             spellCheck={false}
             className={cn(
-              "h-9 w-full rounded-md border bg-white/5 pl-9 pr-8 text-sm text-white transition-colors",
-              "border-white/15 placeholder:text-white/35 focus:border-primary/70 focus:outline-none focus:ring-1 focus:ring-primary/60",
-              error && "border-destructive/70 focus:border-destructive focus:ring-destructive/60"
+              "h-9 rounded-md border text-sm text-white transition-all duration-200",
+              expanded
+                ? "w-52 border-white/15 bg-white/5 pl-9 pr-8 placeholder:text-white/35 focus:border-primary/70 focus:outline-none focus:ring-1 focus:ring-primary/60 sm:w-56"
+                : "w-9 cursor-pointer border-transparent bg-transparent pl-9 pr-0 hover:bg-white/5 focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/60",
+              error &&
+                "border-destructive/70 focus:border-destructive focus:ring-destructive/60"
             )}
           />
           {loading && (

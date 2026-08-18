@@ -65,7 +65,11 @@ export function VehiclePage() {
         initialMode={vin ? "vin" : "registration"}
       />
 
-      <div className="mt-8">
+      <p className="kicker mt-8 text-center">
+        CarTrace — See Beyond the Plate.
+      </p>
+
+      <div className="mt-6">
         {result.isLoading ? (
           <VehicleSkeleton />
         ) : result.isError ? (

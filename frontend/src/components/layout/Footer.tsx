@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/common/Logo";
-import { SITE } from "@/lib/constants";
+import { SITE, TAGLINES } from "@/lib/constants";
 
 const COLUMNS: { heading: string; links: { to: string; label: string }[] }[] = [
   {
@@ -51,7 +51,7 @@ export function Footer() {
                 <Logo size="md" />
               </Link>
               <span className="text-[11px] font-medium tracking-wide text-[hsl(var(--on-dark-soft))]">
-                {SITE.tagline}
+                {TAGLINES.trace}
               </span>
             </div>
             <p className="mt-4 max-w-sm text-sm text-[hsl(var(--on-dark-soft))]">

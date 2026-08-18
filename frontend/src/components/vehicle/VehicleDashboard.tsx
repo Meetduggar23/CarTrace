@@ -121,6 +121,9 @@ export function VehicleDashboard({ record }: VehicleDashboardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
     >
+      <p className="kicker mb-3 text-center">
+        CarTrace — Trace It. Know It. Trust It.
+      </p>
       <Tabs defaultValue={tabs[0].value}>
         <TabsList className="flex h-auto flex-wrap gap-1 p-1.5" aria-label="Vehicle details">
           {tabs.map((tab) => (

@@ -1,9 +1,21 @@
 export const SITE = {
   /** Change the product name here — it propagates across the app. */
-  name: "AutoCheck",
-  tagline: "Vehicle Information & Registration Checker",
+  name: "CarTrace",
+  tagline: "Every Vehicle Has a Story.",
   description:
     "Check vehicle specifications, registration information and available vehicle records in one place.",
+} as const;
+
+/** Brand taglines — used sparingly in their assigned sections. */
+export const TAGLINES = {
+  /** Primary brand message — hero, marketing, about. */
+  primary: "Every Vehicle Has a Story.",
+  /** Action-oriented — search sections, results, dashboard. */
+  action: "Trace It. Know It. Trust It.",
+  /** RTO / registration / VIN sections. */
+  plate: "See Beyond the Plate.",
+  /** Footer, brand story, final CTA. */
+  trace: "Where Every Vehicle Leaves a Trace.",
 } as const;
 
 export const API_URL =

@@ -10,21 +10,21 @@
    */
   :root {
     --background: 0 0% 100%;
-    --foreground: 211 51% 16%;
+    --foreground: 212 28% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 211 51% 16%;
+    --card-foreground: 212 28% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 211 51% 16%;
+    --popover-foreground: 212 28% 13%;
     --primary: 46 65% 52%;
     --primary-foreground: 211 51% 16%;
     --secondary: 210 14% 95%;
-    --secondary-foreground: 211 51% 16%;
+    --secondary-foreground: 212 28% 13%;
     --muted: 210 14% 96%;
-    --muted-foreground: 211 12% 40%;
+    --muted-foreground: 219 13% 46%;
     --accent: 211 51% 16%;
     --accent-foreground: 0 0% 100%;
-    --border: 210 14% 88%;
-    --input: 210 14% 88%;
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
     --ring: 46 65% 52%;
     --success: 140 52% 40%;
     --warning: 38 85% 45%;
@@ -40,21 +40,21 @@
   /* Kept so the fixed `dark` class resolves to the same single palette. */
   .dark {
     --background: 0 0% 100%;
-    --foreground: 211 51% 16%;
+    --foreground: 212 28% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 211 51% 16%;
+    --card-foreground: 212 28% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 211 51% 16%;
+    --popover-foreground: 212 28% 13%;
     --primary: 46 65% 52%;
     --primary-foreground: 211 51% 16%;
     --secondary: 210 14% 95%;
-    --secondary-foreground: 211 51% 16%;
+    --secondary-foreground: 212 28% 13%;
     --muted: 210 14% 96%;
-    --muted-foreground: 211 12% 40%;
+    --muted-foreground: 219 13% 46%;
     --accent: 211 51% 16%;
     --accent-foreground: 0 0% 100%;
-    --border: 210 14% 88%;
-    --input: 210 14% 88%;
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
     --ring: 46 65% 52%;
     --success: 140 52% 40%;
     --warning: 38 85% 45%;

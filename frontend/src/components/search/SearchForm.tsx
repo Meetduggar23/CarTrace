@@ -32,6 +32,8 @@ interface SearchFormProps {
   compact?: boolean;
   size?: "default" | "lg";
   autoFocus?: boolean;
+  /** Override the input placeholder text. */
+  placeholder?: string;
 }
 
 export function SearchForm({
@@ -40,6 +42,7 @@ export function SearchForm({
   compact = false,
   size = "default",
   autoFocus = false,
+  placeholder,
 }: SearchFormProps) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<LookupType>(initialMode ?? "registration");
@@ -113,7 +116,7 @@ export function SearchForm({
           setError(null);
         }}
       >
-        <TabsList className={cn("w-full", !compact && "mx-auto max-w-md")} aria-label="Lookup type">
+        <TabsList className={cn("w-full", !compact && "mx-auto max-w-xl")} aria-label="Lookup type">
           <TabsTrigger value="registration" className="flex-1">
             Registration Number
           </TabsTrigger>
@@ -145,9 +148,10 @@ export function SearchForm({
               onFocus={() => setShowRecents(true)}
               onBlur={() => setTimeout(() => setShowRecents(false), 150)}
               placeholder={
-                mode === "registration"
+                placeholder ??
+                (mode === "registration"
                   ? "Enter vehicle registration number (e.g. MH12AB1234)"
-                  : "Enter 17-character VIN"
+                  : "Enter 17-character VIN")
               }
               autoComplete="off"
               autoCapitalize="characters"
@@ -237,7 +241,7 @@ export function SearchForm({
             type="submit"
             size={size === "lg" ? "lg" : "default"}
             disabled={submitting || !value.trim()}
-            className="shrink-0"
+            className={cn("shrink-0", size === "lg" && "h-14 px-7")}
           >
             {submitting ? (
               <>

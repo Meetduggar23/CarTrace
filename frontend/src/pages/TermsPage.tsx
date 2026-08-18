@@ -6,7 +6,7 @@ import { SITE } from "@/lib/constants";
 export function TermsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-      <Seo title="Terms" description="Terms of use for AutoCheck." path="/terms" />
+      <Seo title="Terms" description="Terms of use for CarTrace." path="/terms" />
       <PageHeader title="Terms of Use" description={`Terms for using ${SITE.name}.`} />
 
       <div className="mt-8 space-y-6">

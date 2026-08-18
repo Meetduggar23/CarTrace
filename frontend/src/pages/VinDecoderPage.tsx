@@ -30,7 +30,11 @@ export function VinDecoderPage() {
         description="Decode a 17-character VIN into manufacturer, model, year and specification data. Powered by the free NHTSA vPIC database for US/Canada market vehicles."
       />
 
-      <div className="mt-8">
+      <p className="kicker mt-6 text-center">
+        CarTrace — See Beyond the Plate.
+      </p>
+
+      <div className="mt-4">
         <SearchForm initialMode="vin" autoFocus />
       </div>
 
