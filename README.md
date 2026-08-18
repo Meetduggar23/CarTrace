@@ -29,7 +29,7 @@ npm run db:generate
 
 # 3. Start backend and frontend in development
 npm run dev
-
+```
 
 <p align="center">
   Made by Meet Duggar
