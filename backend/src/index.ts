@@ -19,7 +19,7 @@ async function bootstrap() {
 
   const app = createApp();
   const server = app.listen(config.port, () => {
-    logger.info(`[boot] AutoCheck API listening on http://localhost:${config.port}`);
+    logger.info(`[boot] CarTrace API listening on http://localhost:${config.port}`);
   });
 
   const shutdown = (signal: string) => {

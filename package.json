@@ -1,8 +1,8 @@
 {
-  "name": "autocheck",
+  "name": "cartrace",
   "version": "1.0.0",
   "private": true,
-  "description": "AutoCheck — Vehicle Information & Registration Checker",
+  "description": "CarTrace — Vehicle Information & Registration Checker",
   "workspaces": [
     "backend",
     "frontend"

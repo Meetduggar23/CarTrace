@@ -11,14 +11,14 @@ export interface TokenPayload {
 export function signToken(payload: TokenPayload): string {
   return jwt.sign(payload, config.jwtSecret, {
     expiresIn: config.jwtExpiresIn as jwt.SignOptions["expiresIn"],
-    issuer: "autocheck",
+    issuer: "cartrace",
   });
 }
 
 export function verifyToken(token: string): TokenPayload {
   try {
     const decoded = jwt.verify(token, config.jwtSecret, {
-      issuer: "autocheck",
+      issuer: "cartrace",
     }) as jwt.JwtPayload;
     if (!decoded.sub || typeof decoded.sub !== "string") {
       throw new UnauthorizedError("Invalid token");

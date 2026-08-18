@@ -1,6 +1,6 @@
 # Architecture
 
-AutoCheck is a full-stack vehicle-information platform with a provider
+CarTrace is a full-stack vehicle-information platform with a provider
 abstraction at its core. Third-party vehicle APIs are never called directly
 from the browser — all lookups go through the backend, which normalizes
 provider responses into a single internal model.

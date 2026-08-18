@@ -1,8 +1,8 @@
 {
-  "name": "@autocheck/backend",
+  "name": "@cartrace/backend",
   "version": "1.0.0",
   "private": true,
-  "description": "AutoCheck backend API",
+  "description": "CarTrace backend API",
   "type": "commonjs",
   "main": "dist/index.js",
   "scripts": {

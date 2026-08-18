@@ -8,7 +8,7 @@ import path from "node:path";
 
 process.env.DATABASE_URL =
   process.env.DATABASE_URL ??
-  "postgresql://postgres:postgres@localhost:5432/autocheck";
+  "postgresql://postgres:postgres@localhost:5432/cartrace";
 
 // Run from the backend dir so "../prisma/schema.prisma" resolves to the
 // repo-root prisma folder.

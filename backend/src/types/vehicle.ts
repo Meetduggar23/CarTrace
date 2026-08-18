@@ -2,7 +2,7 @@
  * Internal, provider-agnostic vehicle record.
  *
  * Every provider response is normalized into this shape. All optional
- * fields are `null` when the provider does not return them — AutoCheck
+ * fields are `null` when the provider does not return them — CarTrace
  * never fabricates values.
  */
 export interface VehicleRecord {

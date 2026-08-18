@@ -19,7 +19,7 @@ Ministry of Road Transport & Highways (Parivahan).
 - This is a **curated subset** covering the major states/UTs. The complete,
   authoritative list lives with each state transport department and Parivahan
   (https://parivahan.gov.in/).
-- The UI states that AutoCheck is not an RTO authority and that details should
+- The UI states that CarTrace is not an RTO authority and that details should
   be verified with the state transport department.
 
 ## Model

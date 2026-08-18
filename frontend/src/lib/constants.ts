@@ -35,8 +35,8 @@ export const EXAMPLE_VINS = [
   "MA3EYD31S00557242",
 ] as const;
 
-export const GUEST_HISTORY_KEY = "autocheck-guest-history";
-export const AUTH_TOKEN_KEY = "autocheck-token";
-export const COMPARE_KEY = "autocheck-compare";
+export const GUEST_HISTORY_KEY = "cartrace-guest-history";
+export const AUTH_TOKEN_KEY = "cartrace-token";
+export const COMPARE_KEY = "cartrace-compare";
 
 export const GUEST_HISTORY_LIMIT = 10;

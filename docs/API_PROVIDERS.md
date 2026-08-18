@@ -1,6 +1,6 @@
 # Vehicle Data Providers
 
-AutoCheck verifies providers against the Public APIs community collection
+CarTrace verifies providers against the Public APIs community collection
 (https://github.com/public-apis/public-apis, Vehicle category) before wiring
 them in. The table below reflects what was verified at implementation time.
 
@@ -57,14 +57,14 @@ configuring the key, and adjust the `normalize()` mapping if needed.
 ## What is honestly not available
 
 - **Indian RTO registration lookup (RC details, owner info, insurance/PUC/
-  fitness status)** is NOT available through any free/public API. AutoCheck
+  fitness status)** is NOT available through any free/public API. CarTrace
   does not claim otherwise: with real providers configured, registration
   lookups return “This lookup type is currently unavailable with the
   configured provider.”
 - Registration/RTO/insurance/PUC/fitness sections only render when the active
   provider actually returns that data.
 - Vehicle photos are never fabricated: when a provider returns no image,
-  AutoCheck shows a generic illustration.
+  CarTrace shows a generic illustration.
 
 ## Enabling / disabling
 
