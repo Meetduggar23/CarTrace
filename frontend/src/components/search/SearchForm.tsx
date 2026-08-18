@@ -107,7 +107,12 @@ export function SearchForm({
   const examples = mode === "registration" ? EXAMPLE_REGISTRATIONS : EXAMPLE_VINS;
 
   return (
-    <div className={cn("w-full", compact ? "" : "mx-auto max-w-2xl")}>
+    <div
+      className={cn(
+        "w-full",
+        compact ? "" : size === "lg" ? "mx-auto max-w-3xl" : "mx-auto max-w-2xl"
+      )}
+    >
       {/* Mode tabs */}
       <Tabs
         value={mode}
@@ -116,7 +121,13 @@ export function SearchForm({
           setError(null);
         }}
       >
-        <TabsList className={cn("w-full", !compact && "mx-auto max-w-xl")} aria-label="Lookup type">
+        <TabsList
+          className={cn(
+            "w-full",
+            !compact && (size === "lg" ? "mx-auto max-w-2xl" : "mx-auto max-w-xl")
+          )}
+          aria-label="Lookup type"
+        >
           <TabsTrigger value="registration" className="flex-1">
             Registration Number
           </TabsTrigger>
@@ -126,7 +137,7 @@ export function SearchForm({
         </TabsList>
       </Tabs>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-4">
+      <form onSubmit={handleSubmit} noValidate className="mt-3">
         <div
           className={cn(
             "relative flex flex-col gap-2 sm:flex-row sm:items-stretch",
@@ -164,10 +175,9 @@ export function SearchForm({
               }
               aria-invalid={error ? true : undefined}
               className={cn(
-                "pr-10 uppercase tracking-wide",
-                size === "lg" && "h-14 text-base",
-                error && "border-destructive focus-visible:ring-destructive",
-                compact && "h-11"
+                "uppercase tracking-wide",
+                size === "lg" ? "h-14 pl-12 pr-10 text-base" : "h-11 pl-10 pr-10",
+                error && "border-destructive focus-visible:ring-destructive"
               )}
             />
             {value && (
@@ -241,7 +251,7 @@ export function SearchForm({
             type="submit"
             size={size === "lg" ? "lg" : "default"}
             disabled={submitting || !value.trim()}
-            className={cn("shrink-0", size === "lg" && "h-14 px-7")}
+            className={cn("shrink-0", size === "lg" ? "h-14 px-8" : "px-5")}
           >
             {submitting ? (
               <>

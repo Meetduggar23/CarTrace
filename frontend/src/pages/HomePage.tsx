@@ -172,16 +172,23 @@ export function HomePage() {
             animate="visible"
             className="mx-auto max-w-3xl text-center"
           >
-            <motion.h1
+            <motion.p
               variants={fadeUp}
               custom={0}
+              className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[hsl(var(--on-dark-soft))]"
+            >
+              CarTrace — Trace It. Know It. Trust It.
+            </motion.p>
+            <motion.h1
+              variants={fadeUp}
+              custom={1}
               className="font-display text-4xl font-medium leading-[1.05] tracking-tight text-[hsl(var(--on-dark))] sm:text-5xl lg:text-6xl"
             >
               Every Vehicle Has a <span className="text-gradient">Story.</span>
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              custom={1}
+              custom={2}
               className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[hsl(var(--on-dark-soft))] sm:text-lg"
             >
               Trace it, discover the available information, and make more informed
@@ -192,12 +199,12 @@ export function HomePage() {
       </section>
 
       {/* Floating search card — overlaps the bottom of the hero */}
-      <div className="relative z-10 mx-auto -mt-20 w-[calc(100%-2.5rem)] max-w-[1180px] sm:-mt-24 lg:-mt-28">
+      <div className="relative z-10 mx-auto -mt-20 w-[calc(100%-3rem)] max-w-[1180px] sm:-mt-24 lg:-mt-28">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="rounded-[24px] border border-border bg-white p-5 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.4)] sm:p-7 lg:p-8"
+          className="rounded-[24px] border border-border bg-white px-5 py-4 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.4)] sm:px-7 sm:py-5 lg:px-9 lg:py-6"
         >
           <HomeSearch />
         </motion.div>

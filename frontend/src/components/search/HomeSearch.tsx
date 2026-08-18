@@ -21,6 +21,7 @@ const FORM_BY_HREF: Record<string, ServiceForm> = {
   "/car-insurance": { kind: "reg", button: "Check Insurance", target: "/car-insurance" },
   "/bike-insurance": { kind: "reg", button: "Check Insurance", target: "/bike-insurance" },
   "/service-history": { kind: "reg", button: "Check Service History", target: "/service-history" },
+  "/new-cars": { kind: "text", button: "Search Cars", target: "/new-cars", placeholder: "Search new cars" },
   "/used-cars": { kind: "text", button: "Search Cars", target: "/used-cars", placeholder: "Search used cars" },
   "/fastag": { kind: "reg", button: "Check FASTag", target: "/fastag" },
 };
@@ -45,9 +46,6 @@ export function HomeSearch() {
 
   return (
     <div>
-      <p className="kicker mb-3 text-center sm:text-left">
-        CarTrace — Trace It. Know It. Trust It.
-      </p>
       {/* Service selector — contained row; distributes equally when it fits,
           scrolls horizontally (scrollbar hidden) inside the card when it doesn't */}
       <div
@@ -89,7 +87,7 @@ export function HomeSearch() {
                   }
                 }}
                 className={cn(
-                  "flex shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 py-3 text-sm font-medium transition-colors",
+                  "flex shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 py-2.5 text-sm font-medium transition-colors",
                   isActive
                     ? "border-primary bg-primary/5 text-primary"
                     : "border-transparent text-muted-foreground hover:bg-primary/5 hover:text-foreground"
@@ -117,7 +115,7 @@ export function HomeSearch() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="pt-5 sm:pt-6"
+          className="pt-4"
         >
           {form.kind === "rc" ? <RcForm /> : form.kind === "reg" ? <RegFeatureForm {...form} /> : <TextFeatureForm {...form} />}
         </motion.div>
@@ -131,7 +129,7 @@ function RcForm() {
   return (
     <div>
       <SearchForm size="lg" placeholder="Enter vehicle registration number" />
-      <p className="mt-4 text-center text-xs text-muted-foreground">
+      <p className="mt-3 text-center text-xs text-muted-foreground">
         Only publicly available information supported by the selected data provider is
         displayed.
       </p>

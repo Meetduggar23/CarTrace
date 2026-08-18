@@ -5,6 +5,7 @@ import {
   FileCheck2,
   Gavel,
   ShieldCheck,
+  Sparkles,
   Wrench,
   type LucideIcon,
 } from "lucide-react";
@@ -22,6 +23,7 @@ export const FEATURES: NavFeature[] = [
   { label: "Car Insurance", href: "/car-insurance", icon: ShieldCheck },
   { label: "Bike Insurance", href: "/bike-insurance", icon: Bike },
   { label: "Service History", href: "/service-history", icon: Wrench },
+  { label: "New Car", href: "/new-cars", icon: Sparkles },
   { label: "Used Car", href: "/used-cars", icon: CarFront },
   { label: "FASTag", href: "/fastag", icon: CreditCard },
 ];
