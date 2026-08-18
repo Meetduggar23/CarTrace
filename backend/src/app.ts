@@ -13,6 +13,12 @@ import apiRoutes from "./routes";
 export function createApp() {
   const app = express();
 
+  // When running behind a reverse proxy (TRUST_PROXY=true), trust the
+  // X-Forwarded-For header so rate limiting and logging see the real client IP.
+  if (config.trustProxy) {
+    app.set("trust proxy", 1);
+  }
+
   // Security headers
   app.use(
     helmet({
@@ -20,11 +26,12 @@ export function createApp() {
     })
   );
 
-  // CORS — only allow configured origins
+  // CORS — only allow configured origins.
   app.use(
     cors({
       origin(origin, callback) {
-        if (!origin || config.corsOrigins.length === 0) {
+        // Requests without an Origin header (curl, server-to-server) are fine.
+        if (!origin) {
           callback(null, true);
           return;
         }
@@ -32,7 +39,9 @@ export function createApp() {
           callback(null, true);
           return;
         }
-        callback(new Error("Origin not allowed by CORS"));
+        // Deny unknown browser origins. An empty allow-list must NOT silently
+        // allow every origin; the browser will block the request.
+        callback(null, false);
       },
       methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],

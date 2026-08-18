@@ -1,7 +1,10 @@
 import { getCache } from "../cache";
 import { config } from "../config/env";
 import { providerManager } from "../providers/provider-manager";
-import { VehicleNotFoundError } from "../types/errors";
+import {
+  ProviderUnavailableError,
+  VehicleNotFoundError,
+} from "../types/errors";
 import type { LookupResult, LookupType, VehicleRecord } from "../types/vehicle";
 import { requireValidRegistration, requireValidVin } from "../utils/validation";
 import type { Prisma } from "../generated/prisma";
@@ -37,47 +40,87 @@ export class VehicleService {
     query: string,
     options: LookupOptions
   ): Promise<LookupResult> {
-    const provider = providerManager.selectFor(type);
-    const key = cacheKey(provider.id, type, query);
-    const cache = getCache();
-
-    if (!options.noCache) {
-      const cached = await cache.get<VehicleRecord>(key);
-      if (cached) {
-        return {
-          record: cached,
-          cached: true,
-          providerId: provider.id,
-          providerName: provider.name,
-        };
-      }
-    }
-
-    const record =
-      type === "vin"
-        ? await provider.decodeVin(query)
-        : await provider.lookupRegistration(query);
-
-    if (!record || (type === "vin" && !record.vin && !record.manufacturer)) {
-      throw new VehicleNotFoundError();
-    }
-
-    if (!options.noCache) {
-      await cache.set(key, record, config.vehicleCacheTtlSeconds);
-    }
-
-    if (options.userId) {
-      await this.recordHistory(options.userId, type, query, record).catch(
-        () => undefined
+    const candidates = providerManager.getCandidatesFor(type);
+    if (candidates.length === 0) {
+      throw new ProviderUnavailableError(
+        type === "registration"
+          ? "This lookup type is currently unavailable with the configured provider."
+          : "VIN lookup is currently unavailable with the configured provider."
       );
     }
 
-    return {
-      record,
-      cached: false,
-      providerId: provider.id,
-      providerName: provider.name,
-    };
+    const cache = getCache();
+    if (!options.noCache) {
+      // Try every provider's cache entry before hitting the network.
+      for (const provider of candidates) {
+        const cached = await cache.get<VehicleRecord>(
+          cacheKey(provider.id, type, query)
+        );
+        if (cached) {
+          if (options.userId) {
+            await this.recordHistory(options.userId, type, query, cached).catch(
+              () => undefined
+            );
+          }
+          return {
+            record: cached,
+            cached: true,
+            providerId: provider.id,
+            providerName: provider.name,
+          };
+        }
+      }
+    }
+
+    // Try providers in order, falling back to the next one on any failure.
+    let lastError: unknown;
+    for (const provider of candidates) {
+      try {
+        const record =
+          type === "vin"
+            ? await provider.decodeVin(query)
+            : await provider.lookupRegistration(query);
+
+        if (!record || (type === "vin" && !record.vin && !record.manufacturer)) {
+          throw new VehicleNotFoundError();
+        }
+
+        if (!options.noCache) {
+          await cache.set(
+            cacheKey(provider.id, type, query),
+            record,
+            config.vehicleCacheTtlSeconds
+          );
+        }
+
+        if (options.userId) {
+          await this.recordHistory(options.userId, type, query, record).catch(
+            () => undefined
+          );
+        }
+
+        return {
+          record,
+          cached: false,
+          providerId: provider.id,
+          providerName: provider.name,
+        };
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    // Every provider failed. Prefer the most specific error we saw: if none
+    // found the vehicle, report that; otherwise report the provider failure.
+    if (lastError instanceof VehicleNotFoundError) {
+      throw lastError;
+    }
+    if (lastError instanceof Error) {
+      throw new ProviderUnavailableError(lastError.message);
+    }
+    throw new ProviderUnavailableError(
+      "The vehicle data provider could not be reached. Please try again later."
+    );
   }
 
   private async recordHistory(

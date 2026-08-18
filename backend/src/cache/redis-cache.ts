@@ -18,7 +18,16 @@ export class RedisCache implements Cache {
       lazyConnect: true,
       maxRetriesPerRequest: 1,
       connectTimeout: 3_000,
-      retryStrategy: (times: number) => (times > 3 ? null : 500 * times),
+      // Keep retrying with capped exponential backoff so the cache can
+      // recover if Redis comes back instead of degrading permanently.
+      retryStrategy: (times: number) =>
+        Math.min(500 * 2 ** Math.min(times, 6), 30_000),
+    });
+    this.client.on("ready", () => {
+      if (this.failed) {
+        this.failed = false;
+        logger.info("[cache] Redis connection restored");
+      }
     });
     this.client.on("error", (err: Error) => {
       if (!this.failed) {

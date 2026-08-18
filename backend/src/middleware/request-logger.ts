@@ -10,9 +10,12 @@ export function requestLogger(
   res.on("finish", () => {
     const duration = Date.now() - start;
     const level = res.statusCode >= 500 ? "error" : res.statusCode >= 400 ? "warn" : "info";
-    logger[level](
-      `${req.method} ${req.originalUrl} -> ${res.statusCode} (${duration}ms)`
+    // Mask sensitive query values (VINs, registration numbers) in logs.
+    const url = req.originalUrl.replace(
+      /([?&](?:vin|registrationNumber|registration|q|query)=)[^&]+/gi,
+      "$1<redacted>"
     );
+    logger[level](`${req.method} ${url} -> ${res.statusCode} (${duration}ms)`);
   });
   next();
 }

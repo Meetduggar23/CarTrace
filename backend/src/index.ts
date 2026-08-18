@@ -22,6 +22,11 @@ async function bootstrap() {
     logger.info(`[boot] CarTrace API listening on http://localhost:${config.port}`);
   });
 
+  server.on("error", (err: Error & { code?: string }) => {
+    logger.error("[boot] server error", { error: err.message, code: err.code });
+    process.exit(1);
+  });
+
   const shutdown = (signal: string) => {
     logger.info(`[boot] received ${signal}, shutting down...`);
     server.close(() => process.exit(0));

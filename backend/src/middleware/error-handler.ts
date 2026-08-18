@@ -40,6 +40,50 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
+  // Malformed JSON bodies (body-parser) -> 400 instead of an opaque 500.
+  if (
+    err instanceof SyntaxError &&
+    "type" in err &&
+    (err as { type?: string }).type === "entity.parse.failed"
+  ) {
+    res.status(400).json({
+      error: {
+        code: "INVALID_JSON",
+        message: "Request body is not valid JSON.",
+      },
+    });
+    return;
+  }
+
+  // Bodies over the size limit -> 413 instead of an opaque 500.
+  if (
+    err instanceof Error &&
+    "type" in err &&
+    (err as { type?: string }).type === "entity.too.large"
+  ) {
+    res.status(413).json({
+      error: {
+        code: "PAYLOAD_TOO_LARGE",
+        message: "Request body is too large.",
+      },
+    });
+    return;
+  }
+
+  // Prisma validation errors (bad data passed to the DB) -> 400.
+  if (
+    err instanceof Error &&
+    err.name === "PrismaClientValidationError"
+  ) {
+    res.status(400).json({
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "The request data could not be stored as provided.",
+      },
+    });
+    return;
+  }
+
   // Prisma errors when the database is unavailable
   if (
     err instanceof Error &&

@@ -27,6 +27,7 @@ async function fetchOnce(
     const res = await fetch(url, {
       headers: {
         Accept: "application/json",
+        "User-Agent": "CarTraceAPI/1.0",
         ...options.headers,
       },
       signal: controller.signal,

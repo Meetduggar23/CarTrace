@@ -50,6 +50,7 @@ export function NavSearch({
   const focusedRef = useRef(false);
   const closeTimer = useRef<number | null>(null);
   const loadingTimer = useRef<number | null>(null);
+  const recentsTimer = useRef<number | null>(null);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -81,6 +82,7 @@ export function NavSearch({
     () => () => {
       if (closeTimer.current) window.clearTimeout(closeTimer.current);
       if (loadingTimer.current) window.clearTimeout(loadingTimer.current);
+      if (recentsTimer.current) window.clearTimeout(recentsTimer.current);
     },
     []
   );
@@ -153,6 +155,7 @@ export function NavSearch({
 
   function handleFocus() {
     focusedRef.current = true;
+    if (recentsTimer.current) window.clearTimeout(recentsTimer.current);
     openField();
     setRecents(getGuestHistory());
     setShowRecents(true);
@@ -161,7 +164,8 @@ export function NavSearch({
   function handleBlur() {
     focusedRef.current = false;
     // Let a recent-search click (onMouseDown) finish before closing.
-    window.setTimeout(() => setShowRecents(false), 150);
+    if (recentsTimer.current) window.clearTimeout(recentsTimer.current);
+    recentsTimer.current = window.setTimeout(() => setShowRecents(false), 150);
     closeFieldSoon();
   }
 

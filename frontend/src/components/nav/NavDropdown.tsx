@@ -106,6 +106,7 @@ export function NavDropdown({
   }
 
   function onItemKeyDown(e: React.KeyboardEvent, index: number) {
+    if (items.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       const next = (index + 1) % items.length;

@@ -33,6 +33,9 @@ export interface LoginInput {
   password: string;
 }
 
+const DUMMY_PASSWORD_HASH =
+  "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
+
 export class UserService {
   async register(input: RegisterInput) {
     const prisma = requireDb();
@@ -70,6 +73,9 @@ export class UserService {
     const email = input.email.trim().toLowerCase();
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
+      // Equalize timing with the password-check branch so account existence
+      // cannot be inferred from response latency.
+      await verifyPassword(input.password, DUMMY_PASSWORD_HASH);
       throw new UnauthorizedError("Invalid email or password.");
     }
     const ok = await verifyPassword(input.password, user.passwordHash);

@@ -82,7 +82,13 @@ export class CarApiProvider implements VehicleProvider {
       );
     }
 
-    return this.normalize(res.body as Record<string, unknown>, cleanVin);
+    const record = this.normalize(res.body as Record<string, unknown>, cleanVin);
+    if (!record.manufacturer && !record.model && !record.modelYear) {
+      throw new VehicleNotFoundError(
+        "We couldn't find a record for this VIN in the CarAPI database."
+      );
+    }
+    return record;
   }
 
   async lookupRegistration(_reg: string): Promise<VehicleRecord> {

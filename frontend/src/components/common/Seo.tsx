@@ -41,13 +41,16 @@ export function Seo({
     const fullTitle = title
       ? `${title} — ${SITE.name}`
       : `${SITE.name} — ${SITE.tagline}`;
+    const absolutePath = `${window.location.origin}${
+      path.startsWith("/") ? path : `/${path}`
+    }`;
     document.title = fullTitle;
     setMeta("name", "description", description);
     setMeta("property", "og:title", fullTitle);
     setMeta("property", "og:description", description);
     setMeta("property", "og:type", type);
-    setMeta("property", "og:url", path);
-    setLink("canonical", path);
+    setMeta("property", "og:url", absolutePath);
+    setLink("canonical", absolutePath);
   }, [title, description, path, type]);
 
   return null;

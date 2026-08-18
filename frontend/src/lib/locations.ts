@@ -64,6 +64,13 @@ export const LOCATION_OPTIONS: LocationOption[] = [
     image: "https://cdn.pixabay.com/photo/2018/07/02/09/12/tandula-3511190_1280.jpg",
   },
   {
+    label: "Delhi",
+    code: "DL",
+    group: "state",
+    landmark: "Red Fort",
+    image: "https://cdn.pixabay.com/photo/2017/04/23/19/16/red-fort-2254704_1280.jpg",
+  },
+  {
     label: "Goa",
     code: "GA",
     group: "state",
@@ -244,13 +251,6 @@ export const LOCATION_OPTIONS: LocationOption[] = [
     group: "ut",
     landmark: "Daman Beach",
     image: "https://cdn.pixabay.com/photo/2020/04/15/12/26/daman-5046451_1280.jpg",
-  },
-  {
-    label: "Delhi",
-    code: "DL",
-    group: "ut",
-    landmark: "India Gate",
-    image: "https://cdn.pixabay.com/photo/2018/07/09/14/48/india-gate-3526277_1280.jpg",
   },
   {
     label: "Jammu and Kashmir",

@@ -274,7 +274,7 @@ export function App() {
           }
         />
         <Route
-          path="new-cars/:brand/:model"
+          path="new-cars/:slug"
           element={
             <Suspense fallback={<PageLoader />}>
               <CarDetailPage />

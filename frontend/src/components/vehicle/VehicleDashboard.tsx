@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Building2,
   ClipboardList,
@@ -171,12 +172,12 @@ export function VehicleDashboard({ record }: VehicleDashboardProps) {
                   </div>
                 </div>
                 {record.rtoCode && (
-                  <a
-                    href={`/rto/${encodeURIComponent(record.rtoCode)}`}
+                  <Link
+                    to={`/rto/${encodeURIComponent(record.rtoCode)}`}
                     className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3.5 py-2 text-sm font-medium text-primary transition-colors hover:border-primary/50"
                   >
                     View RTO Information <span aria-hidden>→</span>
-                  </a>
+                  </Link>
                 )}
               </div>
             )}
@@ -199,12 +200,12 @@ export function VehicleDashboard({ record }: VehicleDashboardProps) {
             title="RTO Information"
             extra={
               record.rtoCode ? (
-                <a
-                  href={`/rto/${encodeURIComponent(record.rtoCode)}`}
+                <Link
+                  to={`/rto/${encodeURIComponent(record.rtoCode)}`}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:border-primary/50"
                 >
                   View RTO Information <span aria-hidden>→</span>
-                </a>
+                </Link>
               ) : undefined
             }
           >

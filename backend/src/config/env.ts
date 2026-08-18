@@ -11,7 +11,12 @@ dotenv.config({ path: candidates, quiet: true });
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("debug"),
   PORT: z.coerce.number().int().positive().default(4000),
+  TRUST_PROXY: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((v) => v === "true"),
   CORS_ORIGINS: z.string().default("http://localhost:5173"),
   DATABASE_URL: z.string().optional(),
   REDIS_URL: z.string().optional(),
@@ -46,11 +51,15 @@ if (!parsed.success) {
 const env = parsed.data;
 
 if (env.NODE_ENV === "production") {
-  if (env.JWT_SECRET === "dev-only-secret-change-me") {
+  if (
+    env.JWT_SECRET === "dev-only-secret-change-me" ||
+    env.JWT_SECRET.length < 32
+  ) {
     // eslint-disable-next-line no-console
-    console.warn(
-      "[config] WARNING: JWT_SECRET is using the insecure development default in production."
+    console.error(
+      "[config] FATAL: JWT_SECRET must be set to a strong secret (at least 32 characters) in production. Refusing to start."
     );
+    process.exit(1);
   }
   if (env.MOCK_VEHICLE_PROVIDER) {
     // eslint-disable-next-line no-console
@@ -72,7 +81,9 @@ export const mockProviderEnabled =
 
 export const config = {
   nodeEnv: env.NODE_ENV,
+  logLevel: env.LOG_LEVEL,
   port: env.PORT,
+  trustProxy: env.TRUST_PROXY,
   corsOrigins: env.CORS_ORIGINS.split(",")
     .map((s) => s.trim())
     .filter(Boolean),

@@ -25,16 +25,24 @@ export class ProviderManager {
   }
 
   /**
+   * Providers that can serve a lookup type, ordered best-first (real
+   * providers over the mock provider). Used for fallback lookups.
+   */
+  getCandidatesFor(type: LookupType): VehicleProvider[] {
+    const capability: ProviderCapability =
+      type === "vin" ? "vin" : "registration";
+    return this.getEnabledProviders()
+      .filter((p) => p.capabilities.includes(capability))
+      .sort((a, b) => Number(a.isMock) - Number(b.isMock));
+  }
+
+  /**
    * Choose a provider for a lookup type. Real providers are preferred over
    * the mock provider. Throws UnsupportedLookupError when nothing can
    * serve the lookup.
    */
   selectFor(type: LookupType): VehicleProvider {
-    const capability: ProviderCapability =
-      type === "vin" ? "vin" : "registration";
-    const candidates = this.getEnabledProviders()
-      .filter((p) => p.capabilities.includes(capability))
-      .sort((a, b) => Number(a.isMock) - Number(b.isMock));
+    const candidates = this.getCandidatesFor(type);
     if (candidates.length === 0) {
       throw new UnsupportedLookupError(
         type === "registration"
@@ -67,44 +75,46 @@ export class ProviderManager {
   }
 
   async refreshHealth(): Promise<ProviderHealth[]> {
-    const results: ProviderHealth[] = [];
-    for (const provider of this.providers) {
-      const health = await this.check(provider);
-      this.healthCache.set(provider.id, health);
-      results.push(health);
+    const results = await Promise.all(
+      this.providers.map((provider) => this.check(provider))
+    );
+    for (const health of results) {
+      this.healthCache.set(health.id, health);
     }
     return results;
   }
 
   /** Provider info snapshot for the /api/providers endpoint. */
   async getProviderInfo(): Promise<ProviderInfo[]> {
-    const info: ProviderInfo[] = [];
-    for (const provider of this.providers) {
-      const cached = this.healthCache.get(provider.id);
-      const fresh =
-        cached && Date.now() - new Date(cached.checkedAt).getTime() < 60_000;
-      const health = fresh ? cached : await this.check(provider);
-      this.healthCache.set(provider.id, health);
-      info.push({
-        id: provider.id,
-        name: provider.name,
-        description: provider.description,
-        enabled: provider.isEnabled(),
-        requiresAuth: provider.requiresAuth,
-        authConfigured: provider.authConfigured,
-        capabilities: [...provider.capabilities],
-        countries: [...provider.countries],
-        isMock: provider.isMock,
-        lastChecked: health.checkedAt,
-        status: !provider.isEnabled()
+    const tasks: Promise<ProviderInfo>[] = this.providers.map(
+      async (provider) => {
+        const cached = this.healthCache.get(provider.id);
+        const fresh =
+          cached && Date.now() - new Date(cached.checkedAt).getTime() < 60_000;
+        const health = fresh ? cached : await this.check(provider);
+        this.healthCache.set(provider.id, health);
+        const status: ProviderInfo["status"] = !provider.isEnabled()
           ? "disabled"
           : health.ok
             ? "connected"
-            : "unavailable",
-        message: health.message,
-      });
-    }
-    return info;
+            : "unavailable";
+        return {
+          id: provider.id,
+          name: provider.name,
+          description: provider.description,
+          enabled: provider.isEnabled(),
+          requiresAuth: provider.requiresAuth,
+          authConfigured: provider.authConfigured,
+          capabilities: [...provider.capabilities],
+          countries: [...provider.countries],
+          isMock: provider.isMock,
+          lastChecked: health.checkedAt,
+          status,
+          message: health.message,
+        };
+      }
+    );
+    return Promise.all(tasks);
   }
 
   private async check(

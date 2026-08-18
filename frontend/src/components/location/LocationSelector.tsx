@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, X } from "lucide-react";
 import { LOCATION_OPTIONS } from "@/lib/locations";
@@ -22,17 +22,50 @@ interface LocationSelectorProps {
  */
 export function LocationSelector({ open, selected, onSelect, onClose }: LocationSelectorProps) {
   const [query, setQuery] = useState("");
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   // Reset the search each time the modal opens.
   useEffect(() => {
     if (open) setQuery("");
   }, [open]);
 
-  // Close on Escape.
+  // Move focus into the modal on open, restore it on close.
+  useEffect(() => {
+    if (!open) return;
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+    const frame = requestAnimationFrame(() => dialogRef.current?.focus());
+    return () => {
+      cancelAnimationFrame(frame);
+      previouslyFocusedRef.current?.focus?.();
+      previouslyFocusedRef.current = null;
+    };
+  }, [open]);
+
+  // Close on Escape and trap focus inside the modal while it is open.
   useEffect(() => {
     if (!open) return;
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !dialogRef.current) return;
+      const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const inside = dialogRef.current.contains(active);
+      if (e.shiftKey && (active === first || !inside)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !inside)) {
+        e.preventDefault();
+        first.focus();
+      }
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
@@ -67,10 +100,12 @@ export function LocationSelector({ open, selected, onSelect, onClose }: Location
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label="Choose your location"
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+          tabIndex={-1}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 outline-none sm:p-6"
         >
           {/* Dark navy overlay — the whole page stays visible but blurred behind it */}
           <motion.button

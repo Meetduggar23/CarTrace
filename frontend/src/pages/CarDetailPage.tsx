@@ -22,8 +22,7 @@ import { VariantTable } from "@/components/car/VariantTable";
 import { CarCard } from "@/components/car/CarCard";
 
 export function CarDetailPage() {
-  const { brand, model } = useParams<{ brand: string; model: string }>();
-  const slug = `${brand}-${model}`;
+  const { slug } = useParams<{ slug: string }>();
   const car = useMemo(() => carService.getBySlug(slug ?? ""), [slug]);
 
   const similar = useMemo(() => {
@@ -37,7 +36,7 @@ export function CarDetailPage() {
   if (!car) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
-        <Seo title="Car not found" path={`/new-cars/${brand}/${model}`} />
+        <Seo title="Car not found" path={`/new-cars/${slug ?? ""}`} />
         <EmptyState
           icon={Fuel}
           title="Car not found"

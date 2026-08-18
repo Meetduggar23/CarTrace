@@ -1,3 +1,5 @@
+import { config } from "../config/env";
+
 type Level = "debug" | "info" | "warn" | "error";
 
 const ORDER: Record<Level, number> = {
@@ -7,12 +9,7 @@ const ORDER: Record<Level, number> = {
   error: 40,
 };
 
-const activeLevel: Level =
-  process.env.LOG_LEVEL === "debug"
-    ? "debug"
-    : process.env.NODE_ENV === "production"
-      ? "info"
-      : "debug";
+const activeLevel: Level = config.logLevel;
 
 function write(level: Level, message: string, meta?: unknown) {
   if (ORDER[level] < ORDER[activeLevel]) return;

@@ -198,32 +198,37 @@ function FilterContent({ filters, onChange }: { filters: CarFiltersType; onChang
   );
 }
 
-export function CarFiltersPanel({ filters, onChange, totalResults }: CarFiltersPanelProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const activeCount =
+function computeActiveCount(filters: CarFiltersType): number {
+  return (
     filters.brand.length +
     filters.fuel.length +
     filters.bodyType.length +
     filters.transmission.length +
     filters.seats.length +
     (filters.electric ? 1 : 0) +
-    (filters.priceMin > 0 || filters.priceMax < Infinity ? 1 : 0);
+    (filters.priceMin > 0 || filters.priceMax < Infinity ? 1 : 0)
+  );
+}
 
-  function clearAll() {
-    onChange({
-      brand: [],
-      fuel: [],
-      bodyType: [],
-      transmission: [],
-      priceMin: 0,
-      priceMax: Infinity,
-      seats: [],
-      electric: false,
-      search: filters.search,
-      sort: filters.sort,
-    });
-  }
+function clearFilters(filters: CarFiltersType, onChange: (f: CarFiltersType) => void) {
+  onChange({
+    brand: [],
+    fuel: [],
+    bodyType: [],
+    transmission: [],
+    priceMin: 0,
+    priceMax: Infinity,
+    seats: [],
+    electric: false,
+    search: filters.search,
+    sort: filters.sort,
+  });
+}
+
+export function CarFiltersPanel({ filters, onChange, totalResults }: CarFiltersPanelProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const activeCount = computeActiveCount(filters);
 
   return (
     <>
@@ -272,7 +277,7 @@ export function CarFiltersPanel({ filters, onChange, totalResults }: CarFiltersP
               </div>
               <FilterContent filters={filters} onChange={onChange} />
               <div className="mt-6 flex gap-3">
-                <Button variant="outline" className="flex-1" onClick={clearAll}>
+                <Button variant="outline" className="flex-1" onClick={() => clearFilters(filters, onChange)}>
                   Clear all
                 </Button>
                 <Button className="flex-1" onClick={() => setMobileOpen(false)}>
@@ -283,28 +288,33 @@ export function CarFiltersPanel({ filters, onChange, totalResults }: CarFiltersP
           </>
         )}
       </AnimatePresence>
-
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block">
-        <div className="sticky top-24">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-display text-base font-semibold">Filters</h3>
-            {activeCount > 0 && (
-              <button
-                type="button"
-                onClick={clearAll}
-                className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-              >
-                <RotateCcw className="h-3 w-3" /> Clear all
-              </button>
-            )}
-          </div>
-          <p className="mb-4 text-sm text-muted-foreground">
-            {totalResults} car{totalResults !== 1 ? "s" : ""} found
-          </p>
-          <FilterContent filters={filters} onChange={onChange} />
-        </div>
-      </aside>
     </>
+  );
+}
+
+export function CarFiltersSidebar({ filters, onChange, totalResults }: CarFiltersPanelProps) {
+  const activeCount = computeActiveCount(filters);
+
+  return (
+    <aside className="hidden lg:block">
+      <div className="sticky top-24">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="font-display text-base font-semibold">Filters</h3>
+          {activeCount > 0 && (
+            <button
+              type="button"
+              onClick={() => clearFilters(filters, onChange)}
+              className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              <RotateCcw className="h-3 w-3" /> Clear all
+            </button>
+          )}
+        </div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          {totalResults} car{totalResults !== 1 ? "s" : ""} found
+        </p>
+        <FilterContent filters={filters} onChange={onChange} />
+      </div>
+    </aside>
   );
 }

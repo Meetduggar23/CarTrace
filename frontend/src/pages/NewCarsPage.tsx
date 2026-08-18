@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -30,7 +30,7 @@ import {
 } from "@/lib/cars";
 import { CarCard } from "@/components/car/CarCard";
 
-import { CarFiltersPanel } from "@/components/car/CarFilters";
+import { CarFiltersPanel, CarFiltersSidebar } from "@/components/car/CarFilters";
 import { CompareBar } from "@/components/car/CompareBar";
 import { LocationBackground } from "@/components/location/LocationBackground";
 import { getLocationConfig, useSelectedLocation } from "@/lib/locations";
@@ -98,6 +98,12 @@ export function NewCarsPage() {
 
   // Search suggestions
   const [searchFocused, setSearchFocused] = useState(false);
+  const searchBlurTimer = useRef<number | null>(null);
+  useEffect(() => {
+    return () => {
+      if (searchBlurTimer.current) window.clearTimeout(searchBlurTimer.current);
+    };
+  }, []);
   const suggestions = useMemo(() => {
     if (!filters.search || filters.search.length < 2) return [];
     return carService.search(filters.search).slice(0, 5);
@@ -107,7 +113,7 @@ export function NewCarsPage() {
     setCompareList((prev) => {
       const exists = prev.find((c) => c.id === car.id);
       if (exists) return prev.filter((c) => c.id !== car.id);
-      if (prev.length >= 3) return prev;
+      if (prev.length >= 2) return prev;
       return [...prev, car];
     });
   }, []);
@@ -161,8 +167,14 @@ export function NewCarsPage() {
               <input
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+                onFocus={() => {
+                  if (searchBlurTimer.current) window.clearTimeout(searchBlurTimer.current);
+                  setSearchFocused(true);
+                }}
+                onBlur={() => {
+                  if (searchBlurTimer.current) window.clearTimeout(searchBlurTimer.current);
+                  searchBlurTimer.current = window.setTimeout(() => setSearchFocused(false), 200);
+                }}
                 placeholder="Search new cars, brands or models..."
                 aria-label="Search new cars"
                 className="h-14 w-full rounded-2xl border border-white/15 bg-white/10 pl-12 pr-4 text-base text-white placeholder:text-white/40 backdrop-blur-xl focus:border-[#D4AF37]/60 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30"
@@ -520,9 +532,9 @@ export function NewCarsPage() {
 
         {/* Desktop: sidebar + grid */}
         <div className="flex gap-8">
-          {/* Filters sidebar */}
-          <div className="w-72 shrink-0">
-            <CarFiltersPanel
+          {/* Filters sidebar (desktop only) */}
+          <div className="hidden w-72 shrink-0 lg:block">
+            <CarFiltersSidebar
               filters={filters}
               onChange={setFilters}
               totalResults={filteredCars.length}
@@ -531,7 +543,7 @@ export function NewCarsPage() {
 
           {/* Results grid */}
           <div className="flex-1">
-            {/* Mobile filter toggle */}
+            {/* Mobile filter toggle + sheet */}
             <CarFiltersPanel
               filters={filters}
               onChange={setFilters}

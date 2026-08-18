@@ -10,8 +10,8 @@ export interface AuthedRequest extends Request {
 
 function extractToken(req: Request): string | null {
   const header = req.headers.authorization;
-  if (header && header.startsWith("Bearer ")) {
-    return header.slice(7).trim();
+  if (header && /^bearer\s+/i.test(header)) {
+    return header.replace(/^bearer\s+/i, "").trim();
   }
   return null;
 }

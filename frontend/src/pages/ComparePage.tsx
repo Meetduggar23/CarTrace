@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { GitCompareArrows, Plus, Trash2 } from "lucide-react";
 import { Seo } from "@/components/common/Seo";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -11,34 +11,92 @@ import {
   getCompareList,
   removeFromCompare,
 } from "@/services/compare";
+import { carService, type NewCar } from "@/lib/cars";
 import type { VehicleRecord } from "@/lib/types";
 import { formatRegistration } from "@/lib/utils";
 
-interface CompareRow {
+interface RowSpec {
   label: string;
-  get: (v: VehicleRecord) => string | null;
+  fromRecord: (v: VehicleRecord) => string | null;
+  fromCar: (c: NewCar) => string | null;
 }
 
-const ROWS: CompareRow[] = [
-  { label: "Manufacturer", get: (v) => v.manufacturer },
-  { label: "Model", get: (v) => v.model },
-  { label: "Variant / Trim", get: (v) => v.variant },
-  { label: "Model Year", get: (v) => v.modelYear },
-  { label: "Fuel Type", get: (v) => v.fuelType },
-  { label: "Engine", get: (v) => v.engineDisplacement },
-  { label: "Power", get: (v) => v.enginePower },
-  { label: "Transmission", get: (v) => v.transmission },
-  { label: "Drive Type", get: (v) => v.driveType },
-  { label: "Body Type", get: (v) => v.bodyType },
-  { label: "Vehicle Type", get: (v) => v.vehicleType },
-  { label: "Registration", get: (v) => formatRegistration(v.registrationNumber) },
-  { label: "State", get: (v) => v.state },
-  { label: "RTO Code", get: (v) => v.rtoCode },
+const ROWS: RowSpec[] = [
+  { label: "Price", fromRecord: () => null, fromCar: (c) => c.priceDisplay },
+  { label: "Fuel Type", fromRecord: (v) => v.fuelType, fromCar: (c) => c.fuel.join(", ") },
+  { label: "Transmission", fromRecord: (v) => v.transmission, fromCar: (c) => c.transmission.join(", ") },
+  { label: "Body Type", fromRecord: (v) => v.bodyType, fromCar: (c) => c.bodyType },
+  { label: "Engine", fromRecord: (v) => v.engineDisplacement, fromCar: (c) => c.engine },
+  { label: "Power", fromRecord: (v) => v.enginePower, fromCar: (c) => c.power },
+  { label: "Torque", fromRecord: () => null, fromCar: (c) => c.torque },
+  { label: "Mileage", fromRecord: () => null, fromCar: (c) => c.mileage },
+  { label: "Seats", fromRecord: () => null, fromCar: (c) => String(c.seats) },
+  { label: "EV Range", fromRecord: () => null, fromCar: (c) => c.evRange },
+  { label: "Battery Capacity", fromRecord: () => null, fromCar: (c) => c.batteryCapacity },
+  {
+    label: "Launched",
+    fromRecord: () => null,
+    fromCar: (c) =>
+      c.launchDate
+        ? new Date(c.launchDate).toLocaleDateString("en-IN", {
+            year: "numeric",
+            month: "long",
+          })
+        : null,
+  },
+  { label: "Manufacturer", fromRecord: (v) => v.manufacturer, fromCar: () => null },
+  { label: "Model", fromRecord: (v) => v.model, fromCar: () => null },
+  { label: "Variant / Trim", fromRecord: (v) => v.variant, fromCar: () => null },
+  { label: "Model Year", fromRecord: (v) => v.modelYear, fromCar: () => null },
+  { label: "Drive Type", fromRecord: (v) => v.driveType, fromCar: () => null },
+  { label: "Vehicle Type", fromRecord: (v) => v.vehicleType, fromCar: () => null },
+  { label: "Registration", fromRecord: (v) => formatRegistration(v.registrationNumber), fromCar: () => null },
+  { label: "State", fromRecord: (v) => v.state, fromCar: () => null },
+  { label: "RTO Code", fromRecord: (v) => v.rtoCode, fromCar: () => null },
 ];
+
+type CompareItem = NewCar | VehicleRecord;
+
+function isCar(item: CompareItem): item is NewCar {
+  return "slug" in item;
+}
+
+function rowValue(row: RowSpec, item: CompareItem): string | null {
+  return isCar(item) ? row.fromCar(item) : row.fromRecord(item);
+}
+
+function itemTitle(item: CompareItem): string | null {
+  if (isCar(item)) return `${item.brand} ${item.model}`;
+  return (
+    [item.manufacturer, item.model].filter(Boolean).join(" ") ||
+    item.registrationNumber ||
+    item.vin ||
+    null
+  );
+}
+
+function itemSubtitle(item: CompareItem): string | null {
+  if (isCar(item)) return item.priceDisplay;
+  return formatRegistration(item.registrationNumber) ?? item.vin;
+}
 
 export function ComparePage() {
   const [refresh, setRefresh] = useState(0);
+  const [searchParams] = useSearchParams();
+
+  const newCars = useMemo(
+    () =>
+      searchParams
+        .getAll("id")
+        .map((id) => carService.getBySlug(id))
+        .filter((c): c is NewCar => Boolean(c))
+        .slice(0, 2),
+    [searchParams]
+  );
   const vehicles = useMemo(() => getCompareList(), [refresh]);
+
+  const mode: "new-cars" | "records" = newCars.length > 0 ? "new-cars" : "records";
+  const items: CompareItem[] = mode === "new-cars" ? newCars : vehicles;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -51,7 +109,7 @@ export function ComparePage() {
         title="Compare Vehicles"
         description="Add vehicles from any result page, then compare their specifications side-by-side. Differing values are highlighted."
       >
-        {vehicles.length > 0 && (
+        {mode === "records" && items.length > 0 && (
           <Button
             variant="ghost"
             size="sm"
@@ -65,7 +123,7 @@ export function ComparePage() {
         )}
       </PageHeader>
 
-      {vehicles.length === 0 ? (
+      {items.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             icon={GitCompareArrows}
@@ -83,46 +141,46 @@ export function ComparePage() {
           {/* Header row */}
           <div className="grid grid-cols-[minmax(7rem,1fr)_1fr_1fr] gap-3 sm:grid-cols-[minmax(10rem,1fr)_1.2fr_1.2fr]">
             <div />
-            {vehicles.map((vehicle) => (
+            {items.map((item) => (
               <div
-                key={vehicle.id}
+                key={isCar(item) ? item.id : item.id}
                 className="rounded-lg border border-border bg-card p-4"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="truncate font-display font-semibold">
-                      {[vehicle.manufacturer, vehicle.model].filter(Boolean).join(" ") ||
-                        vehicle.registrationNumber ||
-                        vehicle.vin}
+                      {itemTitle(item)}
                     </p>
                     <p className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
-                      {formatRegistration(vehicle.registrationNumber) ?? vehicle.vin}
+                      {itemSubtitle(item)}
                     </p>
-                    {vehicle.isMock && (
+                    {!isCar(item) && item.isMock && (
                       <Badge variant="warning" className="mt-2">
                         Mock
                       </Badge>
                     )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 shrink-0"
-                    aria-label={`Remove ${vehicle.registrationNumber ?? vehicle.vin} from comparison`}
-                    onClick={() => {
-                      removeFromCompare(vehicle.id);
-                      setRefresh((r) => r + 1);
-                    }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                  {mode === "records" && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0"
+                      aria-label={`Remove ${itemTitle(item) ?? item.id} from comparison`}
+                      onClick={() => {
+                        removeFromCompare(item.id);
+                        setRefresh((r) => r + 1);
+                      }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
-            {vehicles.length < 2 && (
+            {items.length < 2 && (
               <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-card/40">
                 <Link
-                  to="/vehicle"
+                  to={mode === "new-cars" ? "/new-cars" : "/vehicle"}
                   className="flex flex-col items-center gap-2 px-4 py-6 text-center text-sm text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Plus className="h-5 w-5" aria-hidden />
@@ -135,10 +193,10 @@ export function ComparePage() {
           {/* Rows */}
           <div className="mt-4 overflow-hidden rounded-lg border border-border bg-card">
             {ROWS.map((row, i) => {
-              const a = vehicles[0];
-              const b = vehicles.length > 1 ? vehicles[1] : undefined;
-              const aVal = a ? row.get(a) : null;
-              const bVal = b ? row.get(b) : null;
+              const a = items[0];
+              const b = items[1];
+              const aVal = a ? rowValue(row, a) : null;
+              const bVal = b ? rowValue(row, b) : null;
               const differs =
                 b !== undefined &&
                 (aVal ?? null) !== (bVal ?? null) &&

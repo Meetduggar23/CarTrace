@@ -1,10 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { X, GitCompareArrows } from "lucide-react";
 import type { NewCar } from "@/lib/cars";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const MAX_COMPARE = 3;
+const MAX_COMPARE = 2;
 
 interface CompareBarProps {
   cars: NewCar[];
@@ -17,6 +18,7 @@ interface CompareBarProps {
  * Supports up to 3 cars with a CTA to open the compare page.
  */
 export function CompareBar({ cars, onRemove, onClear }: CompareBarProps) {
+  const navigate = useNavigate();
   if (cars.length === 0) return null;
 
   return (
@@ -62,7 +64,7 @@ export function CompareBar({ cars, onRemove, onClear }: CompareBarProps) {
           )}
           onClick={() => {
             const params = cars.map((c) => `id=${c.id}`).join("&");
-            window.location.href = `/compare?${params}`;
+            navigate(`/compare?${params}`);
           }}
         >
           Compare ({cars.length})

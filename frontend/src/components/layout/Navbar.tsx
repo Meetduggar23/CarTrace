@@ -102,6 +102,7 @@ export function Navbar() {
     setSelectedLocation(label);
     // Close fast: the gold selection state shows briefly, then the modal
     // exits (~180ms) while the hero background crossfades in behind it.
+    if (locationCloseTimer.current) window.clearTimeout(locationCloseTimer.current);
     locationCloseTimer.current = window.setTimeout(() => setLocationOpen(false), 120);
   }
 

@@ -35,8 +35,9 @@ export function isInCompare(record: VehicleRecord): boolean {
 export function addToCompare(record: VehicleRecord): CompareList {
   const list = read().filter((r) => r.id !== record.id);
   list.push(record);
-  write(list.slice(-MAX_COMPARE));
-  return list;
+  const trimmed = list.slice(-MAX_COMPARE);
+  write(trimmed);
+  return trimmed;
 }
 
 export function removeFromCompare(recordId: string): CompareList {
