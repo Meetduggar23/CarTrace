@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo/logo.png" alt="CarTrace logo" width="360" />
+  <img src="C:\Users\Meet duggar\Desktop\Vehicle Information Checker\frontend\dist\logo.png" alt="CarTrace logo" width="360" />
 </p>
 
 <h1 align="center">Every Vehicle Has a Story</h1>
