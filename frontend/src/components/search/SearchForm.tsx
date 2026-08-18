@@ -2,10 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { History, Loader2, Search, Sparkles, X } from "lucide-react";
-import {
-  EXAMPLE_REGISTRATIONS,
-  EXAMPLE_VINS,
-} from "@/lib/constants";
+import { EXAMPLE_VINS } from "@/lib/constants";
 import type { LookupType } from "@/lib/types";
 import { formatRegistration, normalizeQuery } from "@/lib/utils";
 import {
@@ -19,6 +16,13 @@ import {
   getGuestHistory,
   removeGuestHistory,
 } from "@/services/history";
+import {
+  DEFAULT_LOCATION_EXAMPLES,
+  autoSelectLocationFromRegistration,
+  getLocationConfig,
+  useSelectedLocation,
+} from "@/lib/locations";
+import { RegistrationLocationHint } from "@/components/location/RegistrationLocationHint";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -45,6 +49,8 @@ export function SearchForm({
   placeholder,
 }: SearchFormProps) {
   const navigate = useNavigate();
+  const location = useSelectedLocation();
+  const locationConfig = getLocationConfig(location);
   const [mode, setMode] = useState<LookupType>(initialMode ?? "registration");
   const [value, setValue] = useState(initialQuery);
   const [error, setError] = useState<string | null>(null);
@@ -81,6 +87,10 @@ export function SearchForm({
 
     setSubmitting(true);
     addGuestHistory(normalized, targetMode, null);
+    // Auto-select the state encoded in the plate (e.g. MH12AB1234 → Maharashtra).
+    if (targetMode === "registration") {
+      autoSelectLocationFromRegistration(normalized);
+    }
     const path =
       targetMode === "vin"
         ? `/vehicle/vin/${normalized}`
@@ -104,7 +114,12 @@ export function SearchForm({
     inputRef.current?.focus();
   }
 
-  const examples = mode === "registration" ? EXAMPLE_REGISTRATIONS : EXAMPLE_VINS;
+  // Registration examples follow the selected state/UT (e.g. MH 12 AB 1234
+  // when Maharashtra is selected); VINs stay site-wide.
+  const examples =
+    mode === "registration"
+      ? locationConfig?.examples ?? DEFAULT_LOCATION_EXAMPLES
+      : EXAMPLE_VINS;
 
   return (
     <div
@@ -265,6 +280,9 @@ export function SearchForm({
             )}
           </Button>
         </div>
+
+        {/* Auto state detection feedback while typing a registration number */}
+        <RegistrationLocationHint value={value} enabled={detected !== "vin"} />
 
         {/* Validation hint */}
         <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">

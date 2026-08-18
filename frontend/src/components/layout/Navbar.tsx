@@ -12,14 +12,8 @@ import {
 } from "lucide-react";
 import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import {
-  BUY_CAR,
-  INSURANCE,
-  LOCATION_STORAGE_KEY,
-  MORE,
-  NEW_CAR_MENU,
-  RC_DETAILS,
-} from "@/lib/nav";
+import { BUY_CAR, INSURANCE, MORE, NEW_CAR_MENU, RC_DETAILS } from "@/lib/nav";
+import { setSelectedLocation, useSelectedLocation } from "@/lib/locations";
 import { Logo } from "@/components/common/Logo";
 import { NavDropdown } from "@/components/nav/NavDropdown";
 import { NavSearch } from "@/components/nav/NavSearch";
@@ -44,14 +38,6 @@ function pathActive(pathname: string, paths: string[]): boolean {
   return paths.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-function readLocation(): string {
-  try {
-    return localStorage.getItem(LOCATION_STORAGE_KEY) ?? "India";
-  } catch {
-    return "India";
-  }
-}
-
 /** Shared underline style for plain navbar links (Contact Us). */
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -62,7 +48,10 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [location, setLocation] = useState<string>(readLocation);
+  // The location is a shared selection: it starts as India on every reload
+  // (nothing is restored from storage) and updates instantly when the user
+  // picks a state or a registration number is auto-detected while typing.
+  const location = useSelectedLocation();
   const [locationOpen, setLocationOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const { isAuthenticated, user, logout } = useAuth();
@@ -103,14 +92,10 @@ export function Navbar() {
   }, [mobileOpen]);
 
   function chooseLocation(label: string) {
-    setLocation(label);
-    try {
-      localStorage.setItem(LOCATION_STORAGE_KEY, label);
-    } catch {
-      // ignore
-    }
-    // Let the gold selection state show briefly, then close the modal.
-    window.setTimeout(() => setLocationOpen(false), 350);
+    setSelectedLocation(label);
+    // Close fast: the gold selection state shows briefly, then the modal
+    // exits (~180ms) while the hero background crossfades in behind it.
+    window.setTimeout(() => setLocationOpen(false), 120);
   }
 
   return (

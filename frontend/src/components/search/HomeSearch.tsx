@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Loader2, Search } from "lucide-react";
 import { FEATURES } from "@/lib/nav";
-import { EXAMPLE_REGISTRATIONS } from "@/lib/constants";
+import {
+  DEFAULT_LOCATION_EXAMPLES,
+  getLocationConfig,
+  useSelectedLocation,
+} from "@/lib/locations";
+import { RegistrationLocationHint } from "@/components/location/RegistrationLocationHint";
 import { cn, formatRegistration, normalizeQuery } from "@/lib/utils";
 import { isValidRegistration } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
@@ -148,6 +153,9 @@ function RegFeatureForm({
   placeholder?: string;
 }) {
   const navigate = useNavigate();
+  const location = useSelectedLocation();
+  const locationExamples =
+    getLocationConfig(location)?.examples ?? DEFAULT_LOCATION_EXAMPLES;
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -203,6 +211,9 @@ function RegFeatureForm({
         </Button>
       </div>
 
+      {/* Auto state detection feedback while typing a registration number */}
+      <RegistrationLocationHint value={value} />
+
       {error && (
         <p role="alert" className="mt-2.5 text-sm text-destructive">
           {error}
@@ -211,7 +222,7 @@ function RegFeatureForm({
 
       <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
         Try:{" "}
-        {EXAMPLE_REGISTRATIONS.map((ex) => (
+        {locationExamples.map((ex) => (
           <button
             key={ex}
             type="button"

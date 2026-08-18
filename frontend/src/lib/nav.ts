@@ -67,4 +67,3 @@ export const MORE: NavDropdownItem[] = [
   { label: "About", to: "/about", description: "About & disclaimer" },
 ];
 
-export const LOCATION_STORAGE_KEY = "cartrace-location";

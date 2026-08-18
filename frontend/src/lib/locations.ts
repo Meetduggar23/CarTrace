@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+
 /**
  * Locations offered by the CarTrace location selector.
  *
@@ -283,4 +285,268 @@ export const LOCATION_OPTIONS: LocationOption[] = [
 /** Quick lookup by display label, used to resolve the current navbar location. */
 export function findLocation(label: string): LocationOption | undefined {
   return LOCATION_OPTIONS.find((loc) => loc.label === label);
+}
+
+/**
+ * Default example registration numbers, shown for India and as the fallback
+ * when a location has no config.
+ */
+export const DEFAULT_LOCATION_EXAMPLES: readonly string[] = [
+  "MH 12 AB 1234",
+  "DL 01 AB 1234",
+  "RJ 14 AB 1234",
+  "KA 01 AB 1234",
+];
+
+/**
+ * Per-location example registration numbers for the search box, one set per
+ * state/UT using its RTO prefix, so the "Try:" examples always match the
+ * selected location.
+ */
+const LOCATION_EXAMPLES: Record<string, readonly string[]> = {
+  India: DEFAULT_LOCATION_EXAMPLES,
+  "Andhra Pradesh": ["AP 16 AB 1234", "AP 07 CD 5678", "AP 39 EF 9012"],
+  "Arunachal Pradesh": ["AR 01 AB 1234", "AR 02 CD 5678", "AR 03 EF 9012"],
+  Assam: ["AS 01 AB 1234", "AS 02 CD 5678", "AS 25 EF 9012"],
+  Bihar: ["BR 01 AB 1234", "BR 02 CD 5678", "BR 06 EF 9012"],
+  Chhattisgarh: ["CG 04 AB 1234", "CG 07 CD 5678", "CG 10 EF 9012"],
+  Goa: ["GA 01 AB 1234", "GA 02 CD 5678", "GA 03 EF 9012"],
+  Gujarat: ["GJ 01 AB 1234", "GJ 05 CD 5678", "GJ 06 EF 9012"],
+  Haryana: ["HR 26 AB 1234", "HR 55 CD 5678", "HR 01 EF 9012"],
+  "Himachal Pradesh": ["HP 01 AB 1234", "HP 02 CD 5678", "HP 33 EF 9012"],
+  Jharkhand: ["JH 01 AB 1234", "JH 05 CD 5678", "JH 09 EF 9012"],
+  Karnataka: ["KA 01 AB 1234", "KA 05 CD 5678", "KA 03 EF 9012"],
+  Kerala: ["KL 01 AB 1234", "KL 07 CD 5678", "KL 11 EF 9012"],
+  "Madhya Pradesh": ["MP 04 AB 1234", "MP 09 CD 5678", "MP 15 EF 9012"],
+  Maharashtra: ["MH 12 AB 1234", "MH 01 CD 5678", "MH 14 EF 9012"],
+  Manipur: ["MN 01 AB 1234", "MN 02 CD 5678", "MN 03 EF 9012"],
+  Meghalaya: ["ML 01 AB 1234", "ML 05 CD 5678", "ML 07 EF 9012"],
+  Mizoram: ["MZ 01 AB 1234", "MZ 02 CD 5678", "MZ 03 EF 9012"],
+  Nagaland: ["NL 01 AB 1234", "NL 02 CD 5678", "NL 03 EF 9012"],
+  Odisha: ["OD 02 AB 1234", "OD 05 CD 5678", "OD 33 EF 9012"],
+  Punjab: ["PB 10 AB 1234", "PB 01 CD 5678", "PB 08 EF 9012"],
+  Rajasthan: ["RJ 14 AB 1234", "RJ 01 CD 5678", "RJ 19 EF 9012"],
+  Sikkim: ["SK 01 AB 1234", "SK 02 CD 5678", "SK 03 EF 9012"],
+  "Tamil Nadu": ["TN 01 AB 1234", "TN 09 CD 5678", "TN 10 EF 9012"],
+  Telangana: ["TS 07 AB 1234", "TS 08 CD 5678", "TS 09 EF 9012"],
+  Tripura: ["TR 01 AB 1234", "TR 02 CD 5678", "TR 03 EF 9012"],
+  "Uttar Pradesh": ["UP 32 AB 1234", "UP 65 CD 5678", "UP 80 EF 9012"],
+  Uttarakhand: ["UK 07 AB 1234", "UK 08 CD 5678", "UK 09 EF 9012"],
+  "West Bengal": ["WB 06 AB 1234", "WB 02 CD 5678", "WB 05 EF 9012"],
+  "Andaman and Nicobar Islands": ["AN 01 AB 1234", "AN 02 CD 5678", "AN 03 EF 9012"],
+  Chandigarh: ["CH 01 AB 1234", "CH 02 CD 5678", "CH 03 EF 9012"],
+  "Dadra and Nagar Haveli and Daman and Diu": ["DN 01 AB 1234", "DN 02 CD 5678", "DN 03 EF 9012"],
+  Delhi: ["DL 01 AB 1234", "DL 02 CD 5678", "DL 03 EF 9012"],
+  "Jammu and Kashmir": ["JK 01 AB 1234", "JK 02 CD 5678", "JK 03 EF 9012"],
+  Ladakh: ["LA 01 AB 1234", "LA 02 CD 5678", "LA 03 EF 9012"],
+  Lakshadweep: ["LD 01 AB 1234", "LD 02 CD 5678", "LD 03 EF 9012"],
+  Puducherry: ["PY 01 AB 1234", "PY 02 CD 5678", "PY 03 EF 9012"],
+};
+
+/** Visual/lookup configuration for a state/UT, keyed by display label. */
+export interface LocationConfig {
+  /** RTO prefix, e.g. "MH". */
+  code: string;
+  /** Landmark/landscape image used as the hero background. */
+  background: string;
+  /** Clickable example registration numbers for the search box. */
+  examples: string[];
+}
+
+/**
+ * Centralized location configuration: each state/UT maps to its RTO code,
+ * landmark background image and example registrations, so the whole site can
+ * adapt to the selected location from one source of truth.
+ */
+export const LOCATION_CONFIG: Record<string, LocationConfig> = Object.fromEntries(
+  LOCATION_OPTIONS.map((loc) => [
+    loc.label,
+    {
+      code: loc.code,
+      background: loc.image,
+      examples: [...(LOCATION_EXAMPLES[loc.label] ?? DEFAULT_LOCATION_EXAMPLES)],
+    },
+  ])
+);
+
+/** Look up the config for a location label; undefined when unknown/unselected. */
+export function getLocationConfig(label: string): LocationConfig | undefined {
+  return LOCATION_CONFIG[label];
+}
+
+/* ------------------------------------------------------------------ */
+/* RegistrationStateDetector — centralized prefix → state/UT mapping   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Centralized registration-prefix → state/UT mapping for Indian plates
+ * (e.g. "MH" → Maharashtra). Derived from LOCATION_CONFIG so the RTO codes
+ * always stay in sync with the rest of the location system. Covers all 28
+ * states and 8 union territories with their current registration prefixes.
+ */
+export const registrationStateMap: Record<string, string> = Object.fromEntries(
+  Object.entries(LOCATION_CONFIG).map(([label, config]) => [config.code, label])
+);
+
+/** Legacy RTO prefixes mapped to their current state codes. */
+const REGISTRATION_PREFIX_ALIASES: Record<string, string> = {
+  OR: "OD", // Odisha (pre-2012 plates)
+  UA: "UK", // Uttarakhand (pre-2007 plates)
+  DD: "DN", // Daman & Diu (pre-2020 plates)
+};
+
+/** A state/UT detected from a registration number. */
+export interface RegistrationDetection {
+  /** Matched location label, e.g. "Maharashtra". */
+  label: string;
+  /** Normalized two-letter prefix, e.g. "MH". */
+  prefix: string;
+}
+
+/**
+ * Reusable state detector: extract the two-letter RTO prefix from any
+ * registration input (spaces and lowercase tolerated) and resolve it to a
+ * state/UT. Returns null for empty, single-letter, non-letter or unknown
+ * prefixes, so incomplete/ambiguous input never triggers a change.
+ */
+export function detectRegistrationState(input: string): RegistrationDetection | null {
+  const normalized = input.replace(/[\s-]/g, "").toUpperCase();
+  const prefix = normalized.slice(0, 2);
+  if (!/^[A-Z]{2}$/.test(prefix)) return null;
+  const code = REGISTRATION_PREFIX_ALIASES[prefix] ?? prefix;
+  const label = registrationStateMap[code];
+  return label ? { label, prefix: code } : null;
+}
+
+/**
+ * Detect the state/UT from a registration number and return its option,
+ * e.g. "MH12AB1234" → Maharashtra.
+ */
+export function detectLocationFromRegistration(reg: string): LocationOption | undefined {
+  const detected = detectRegistrationState(reg);
+  return detected ? findLocation(detected.label) : undefined;
+}
+
+/* ------------------------------------------------------------------ */
+/* LocationManager — shared selected-location store                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Where the current location came from. "default" (India) is the root state
+ * on every reload; "auto" comes from vehicle-number detection; "manual"
+ * comes from the location modal. A manual selection is never overridden by
+ * typing — it only switches after explicit confirmation.
+ */
+export type LocationSource = "default" | "auto" | "manual";
+
+/** Root/default location — shown on every fresh reload. */
+export const DEFAULT_LOCATION = "India";
+
+let currentLocation: string = DEFAULT_LOCATION;
+let currentSource: LocationSource = "default";
+const locationListeners = new Set<() => void>();
+
+/** Current selected location label (defaults to India). */
+export function getSelectedLocation(): string {
+  return currentLocation;
+}
+
+/** How the current location was chosen (default / auto / manual). */
+export function getLocationSource(): LocationSource {
+  return currentSource;
+}
+
+/** Select a location explicitly (e.g. from the modal) and notify subscribers. */
+export function setSelectedLocation(label: string, source: LocationSource = "manual"): void {
+  if (label === currentLocation && source === currentSource) return;
+  currentLocation = label;
+  currentSource = source;
+  locationListeners.forEach((listener) => listener());
+}
+
+/**
+ * Apply a state detected from a registration number. Auto-detection always
+ * wins over the default (India) and over a previously auto-detected state,
+ * but never overrides a manually selected one — in that case it returns
+ * false so the UI can offer to switch.
+ */
+export function applyDetectedLocation(label: string): boolean {
+  if (currentSource === "manual" && currentLocation !== label) return false;
+  setSelectedLocation(label, "auto");
+  return true;
+}
+
+/** Subscribe to location changes; returns an unsubscribe function. */
+export function subscribeSelectedLocation(listener: () => void): () => void {
+  locationListeners.add(listener);
+  return () => {
+    locationListeners.delete(listener);
+  };
+}
+
+/** Reactive hook for the selected site location, e.g. "Rajasthan". */
+export function useSelectedLocation(): string {
+  return useSyncExternalStore(subscribeSelectedLocation, getSelectedLocation);
+}
+
+/** Reactive hook for how the current location was chosen. */
+export function useLocationSource(): LocationSource {
+  return useSyncExternalStore(subscribeSelectedLocation, getLocationSource);
+}
+
+/**
+ * LocationManager hook for a registration input. Detects the state from the
+ * value while the user types and auto-selects it immediately (never
+ * overriding a manual selection), exposing the confirmation flow for
+ * conflicts. Pass `enabled={false}` to suppress detection (e.g. in VIN mode).
+ */
+export function useRegistrationLocationSync(value: string, enabled = true) {
+  const location = useSelectedLocation();
+  const source = useLocationSource();
+  const detected = useMemo(
+    () => (enabled ? detectRegistrationState(value) : null),
+    [value, enabled]
+  );
+  const [dismissedLabel, setDismissedLabel] = useState<string | null>(null);
+
+  const blockedByManual =
+    detected !== null && source === "manual" && detected.label !== location;
+  const showConflict = blockedByManual && dismissedLabel !== detected.label;
+
+  // Auto-select immediately while typing — only the background crossfade is
+  // animated; the state change itself is instant and never touches the input.
+  useEffect(() => {
+    if (!detected || blockedByManual) return;
+    applyDetectedLocation(detected.label);
+  }, [detected, blockedByManual]);
+
+  return {
+    /** Current selected location label. */
+    location,
+    /** Detected state/UT from the input, if any. */
+    detected,
+    /** True when the conflict prompt should be shown. */
+    showConflict,
+    /** Accept the detected state (used by "Switch to …"). */
+    confirmSwitch: () => {
+      if (detected) {
+        setSelectedLocation(detected.label, "auto");
+        setDismissedLabel(null);
+      }
+    },
+    /** Keep the manually selected state for this detected plate. */
+    dismissConflict: () => {
+      if (detected) setDismissedLabel(detected.label);
+    },
+  };
+}
+
+/**
+ * Auto-select the state/UT encoded in a registration number (submit path,
+ * e.g. recent-search clicks), e.g. "MH12AB1234" → Maharashtra. Respects the
+ * manual-selection priority via applyDetectedLocation.
+ */
+export function autoSelectLocationFromRegistration(reg: string): void {
+  const detected = detectRegistrationState(reg);
+  if (detected) applyDetectedLocation(detected.label);
 }

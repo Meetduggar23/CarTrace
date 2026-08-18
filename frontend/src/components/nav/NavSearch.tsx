@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { History, Loader2, Search } from "lucide-react";
@@ -9,6 +9,11 @@ import {
   isValidVin,
   lookupErrorMessage,
 } from "@/lib/validation";
+import {
+  autoSelectLocationFromRegistration,
+  detectRegistrationState,
+} from "@/lib/locations";
+import { RegistrationLocationHint } from "@/components/location/RegistrationLocationHint";
 import {
   addGuestHistory,
   getGuestHistory,
@@ -50,6 +55,14 @@ export function NavSearch({
   const [showRecents, setShowRecents] = useState(false);
   const [recents, setRecents] = useState<GuestHistoryEntry[]>([]);
   const [open, setOpen] = useState(mode === "inline");
+
+  // While the user types a registration number, auto-detect its state; close
+  // the recents popover so the detection feedback can show cleanly below.
+  const inputKind = useMemo(() => detectLookupType(value), [value]);
+  const detectedState = useMemo(() => detectRegistrationState(value), [value]);
+  useEffect(() => {
+    if (detectedState) setShowRecents(false);
+  }, [detectedState]);
 
   function openField() {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
@@ -121,6 +134,10 @@ export function NavSearch({
     setShowRecents(false);
     setLoading(true);
     addGuestHistory(normalized, type, null);
+    // Auto-select the state encoded in the plate (e.g. MH12AB1234 → Maharashtra).
+    if (type === "registration") {
+      autoSelectLocationFromRegistration(normalized);
+    }
     onSubmitted?.();
     navigate(type === "vin" ? `/vehicle/vin/${normalized}` : `/vehicle/${normalized}`);
     // The target page takes over; clear the local spinner shortly after.
@@ -200,6 +217,14 @@ export function NavSearch({
           {loading && (
             <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-primary" aria-hidden />
           )}
+
+          {/* Auto state detection feedback below the field (recents close
+              once a state is recognized, so nothing overlaps) */}
+          <RegistrationLocationHint
+            value={value}
+            enabled={inputKind !== "vin"}
+            className="absolute left-0 right-0 top-full z-50 mt-1.5"
+          />
 
           <AnimatePresence>
             {(showRecents || error) && (

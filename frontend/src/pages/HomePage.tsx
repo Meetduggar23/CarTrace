@@ -24,6 +24,8 @@ import {
 import { Accordion } from "@/components/ui/accordion";
 import { Seo } from "@/components/common/Seo";
 import { useAuth } from "@/services/auth";
+import { LocationBackground } from "@/components/location/LocationBackground";
+import { getLocationConfig, useSelectedLocation } from "@/lib/locations";
 import { HomeSearch } from "@/components/search/HomeSearch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -152,6 +154,9 @@ const JUST_REGISTERED_KEY = "cartrace-just-registered";
 export function HomePage() {
   const { isAuthenticated, user } = useAuth();
   const [justRegistered, setJustRegistered] = useState(false);
+  const location = useSelectedLocation();
+  // Hero background follows the selected state/UT; default photo until then.
+  const heroBackground = getLocationConfig(location)?.background ?? "/images/bg.jpg";
 
   // Greet a brand-new user once after they finish signup.
   useEffect(() => {
@@ -176,13 +181,11 @@ export function HomePage() {
     <div>
       <Seo />
 
-      {/* Hero — compact headline over the photo, search card floats below */}
+      {/* Hero — compact headline over the photo, search card floats below.
+          The background follows the selected location and crossfades between
+          landmark images; the dark gradient overlay keeps text readable. */}
       <section className="relative overflow-hidden bg-[hsl(var(--surface-dark))]">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          aria-hidden
-          style={{ backgroundImage: "url(/images/bg.jpg)" }}
-        />
+        <LocationBackground image={heroBackground} />
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--surface-dark)/0.85)] via-[hsl(var(--surface-dark)/0.7)] to-[hsl(var(--surface-dark))]" aria-hidden />
         <div
           className="pointer-events-none absolute inset-0"
