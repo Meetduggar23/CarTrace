@@ -7,7 +7,6 @@ import {
   LogOut,
   MapPin,
   Menu,
-  Search,
   User,
   X,
 } from "lucide-react";
@@ -16,7 +15,6 @@ import { cn } from "@/lib/utils";
 import {
   BUY_CAR,
   INSURANCE,
-  LOCATIONS,
   LOCATION_STORAGE_KEY,
   MORE,
   NEW_CAR_MENU,
@@ -25,9 +23,9 @@ import {
 import { Logo } from "@/components/common/Logo";
 import { NavDropdown } from "@/components/nav/NavDropdown";
 import { NavSearch } from "@/components/nav/NavSearch";
+import { LocationSelector } from "@/components/location/LocationSelector";
 import { useAuth } from "@/services/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 /**
  * Top navigation groups. The label is the centered trigger; the items are the
@@ -66,19 +64,10 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [location, setLocation] = useState<string>(readLocation);
   const [locationOpen, setLocationOpen] = useState(false);
-  const [cityFilter, setCityFilter] = useState("");
   const headerRef = useRef<HTMLElement>(null);
-  const locationTimer = useRef<number | null>(null);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  useEffect(
-    () => () => {
-      if (locationTimer.current) window.clearTimeout(locationTimer.current);
-    },
-    []
-  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -87,11 +76,10 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close the mobile menu and location dropdown on navigation.
+  // Close the mobile menu and location modal on navigation.
   useEffect(() => {
     setMobileOpen(false);
     setLocationOpen(false);
-    setCityFilter("");
   }, [pathname]);
 
   // Close the mobile menu on outside click / Escape.
@@ -114,51 +102,24 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
-  // Close the location dropdown on outside click / Escape.
-  useEffect(() => {
-    if (!locationOpen) return;
-    function onPointerDown(e: PointerEvent) {
-      const target = e.target as Node;
-      if (!document.getElementById("location-selector")?.contains(target)) {
-        setLocationOpen(false);
-      }
-    }
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setLocationOpen(false);
-        setCityFilter("");
-      }
-    }
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [locationOpen]);
-
-  function openLocation() {
-    if (locationTimer.current) window.clearTimeout(locationTimer.current);
-    setLocationOpen(true);
-  }
-  function closeLocationSoon() {
-    if (locationTimer.current) window.clearTimeout(locationTimer.current);
-    locationTimer.current = window.setTimeout(() => setLocationOpen(false), 200);
-  }
-
   function chooseLocation(label: string) {
     setLocation(label);
-    setLocationOpen(false);
     try {
       localStorage.setItem(LOCATION_STORAGE_KEY, label);
     } catch {
       // ignore
     }
+    // Let the gold selection state show briefly, then close the modal.
+    window.setTimeout(() => setLocationOpen(false), 350);
   }
 
   return (
-    <header
-      ref={headerRef}
+    <>
+      <motion.header
+        ref={headerRef}
+      initial={{ opacity: 0, y: -28 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className={cn(
         "sticky top-0 z-50 w-full border-b border-white/10 bg-[hsl(var(--surface-dark))] text-[hsl(var(--on-dark))] transition-shadow duration-300",
         scrolled && "shadow-lg"
@@ -177,18 +138,13 @@ export function Navbar() {
             <span className="sr-only">{SITE.name}</span>
           </Link>
 
-          {/* Location selector */}
-          <div
-            id="location-selector"
-            className="relative hidden lg:block"
-            onMouseEnter={openLocation}
-            onMouseLeave={closeLocationSoon}
-          >
+          {/* Location selector — opens the premium location modal */}
+          <div className="relative hidden lg:block">
             <button
               type="button"
-              aria-haspopup="listbox"
+              aria-haspopup="dialog"
               aria-expanded={locationOpen}
-              onClick={() => setLocationOpen((v) => !v)}
+              onClick={() => setLocationOpen(true)}
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
                 "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]",
@@ -205,61 +161,6 @@ export function Navbar() {
                 aria-hidden
               />
             </button>
-            <AnimatePresence>
-              {locationOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute left-0 top-full z-50 pt-2"
-                >
-                  <div className="w-56 rounded-lg border border-border bg-popover p-1.5 text-popover-foreground shadow-lg">
-                    <p className="px-2.5 pb-1 pt-1 text-xs font-medium text-muted-foreground">
-                      📍 Select Location
-                    </p>
-                    <div className="relative">
-                      <Search
-                        className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
-                        aria-hidden
-                      />
-                      <Input
-                        value={cityFilter}
-                        onChange={(e) => setCityFilter(e.target.value)}
-                        placeholder="Search city"
-                        aria-label="Search city"
-                        className="h-8 pl-8 text-sm"
-                      />
-                    </div>
-                    <ul
-                      role="listbox"
-                      aria-label="Select location"
-                      className="mt-1.5 max-h-56 overflow-y-auto"
-                    >
-                      {LOCATIONS.filter((loc) =>
-                        loc.label.toLowerCase().includes(cityFilter.trim().toLowerCase())
-                      ).map((loc) => (
-                        <li key={loc.label}>
-                          <button
-                            type="button"
-                            role="option"
-                            aria-selected={location === loc.label}
-                            onClick={() => chooseLocation(loc.label)}
-                            className={cn(
-                              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 hover:text-primary",
-                              location === loc.label && "bg-primary/10 font-medium text-primary"
-                            )}
-                          >
-                            <MapPin className="h-3.5 w-3.5" aria-hidden />
-                            {loc.label}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
 
@@ -354,28 +255,23 @@ export function Navbar() {
                 <NavSearch onSubmitted={() => setMobileOpen(false)} />
               </div>
 
-              {/* Location */}
+              {/* Location — opens the premium location modal */}
               <div>
-                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
                   <MapPin className="h-3.5 w-3.5 text-primary" aria-hidden /> Location
                 </p>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {LOCATIONS.map((loc) => (
-                    <button
-                      key={loc.label}
-                      type="button"
-                      onClick={() => chooseLocation(loc.label)}
-                      className={cn(
-                        "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                        location === loc.label
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-white/15 text-[hsl(var(--on-dark-soft))] hover:border-primary/50 hover:text-[hsl(var(--on-dark))]"
-                      )}
-                    >
-                      {loc.label}
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setLocationOpen(true)}
+                  className="flex w-full items-center gap-2 rounded-md border border-white/15 px-3 py-2.5 text-sm font-medium text-[hsl(var(--on-dark))] transition-colors hover:border-primary/50 hover:text-primary"
+                >
+                  <MapPin className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                  <span className="min-w-0 flex-1 truncate text-left">{location}</span>
+                  <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--on-dark-soft))]" aria-hidden />
+                </button>
+                <p className="mt-1.5 text-xs text-[hsl(var(--on-dark-soft))]">
+                  Tap to choose a state or union territory
+                </p>
               </div>
 
               {/* Link groups */}
@@ -462,6 +358,17 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
-  );
+    </motion.header>
+
+    {/* Premium location selection modal (desktop + mobile).
+        Rendered outside the header so no transformed ancestor breaks
+        position: fixed on the full-screen overlay. */}
+    <LocationSelector
+      open={locationOpen}
+      selected={location}
+      onSelect={chooseLocation}
+      onClose={() => setLocationOpen(false)}
+    />
+  </>
+);
 }

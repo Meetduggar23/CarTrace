@@ -67,18 +67,4 @@ export const MORE: NavDropdownItem[] = [
   { label: "About", to: "/about", description: "About & disclaimer" },
 ];
 
-/** Locations offered by the navbar location selector. */
-export const LOCATIONS: { label: string; code: string }[] = [
-  { label: "India", code: "IN" },
-  { label: "Delhi", code: "DL" },
-  { label: "Mumbai", code: "MH" },
-  { label: "Bengaluru", code: "KA" },
-  { label: "Pune", code: "MH-PN" },
-  { label: "Chennai", code: "TN" },
-  { label: "Hyderabad", code: "TS" },
-  { label: "Kolkata", code: "WB" },
-  { label: "Ahmedabad", code: "GJ" },
-  { label: "Jaipur", code: "RJ" },
-];
-
 export const LOCATION_STORAGE_KEY = "cartrace-location";

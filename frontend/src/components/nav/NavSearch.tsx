@@ -208,8 +208,9 @@ export function NavSearch({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.12 }}
-                className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg"
+                className="absolute left-0 right-0 top-full z-50 mt-1.5 overflow-hidden rounded-none border border-border bg-popover text-popover-foreground shadow-xl"
               >
+                <span className="block h-0.5 w-full bg-primary" aria-hidden />
                 {error ? (
                   <p role="alert" className="px-3 py-2.5 text-sm text-destructive">
                     {error}

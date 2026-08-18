@@ -173,13 +173,17 @@ export function NavDropdown({
             )}
           >
             <div
-              role="menu"
-              aria-label={label}
               className={cn(
-                "w-64 rounded-lg border border-border bg-popover p-1.5 text-popover-foreground shadow-lg",
+                "w-64 overflow-hidden rounded-none border border-border bg-popover shadow-xl",
                 align === "right" && "w-52"
               )}
             >
+              <span className="block h-0.5 w-full bg-primary" aria-hidden />
+              <div
+                role="menu"
+                aria-label={label}
+                className="p-1.5 text-popover-foreground"
+              >
               {header && (
                 <div className="border-b border-border px-3 pb-2 pt-1.5">
                   {header}
@@ -187,7 +191,7 @@ export function NavDropdown({
               )}
               {items.map((item, i) => {
                 const classes = cn(
-                  "flex w-full items-start justify-between gap-3 rounded-md px-3 py-2.5 text-left text-sm transition-colors",
+                  "flex w-full items-start justify-between gap-3 rounded-none px-3 py-2.5 text-left text-sm transition-colors",
                   "text-foreground hover:bg-primary/10 hover:text-primary focus-visible:bg-primary/10 focus-visible:text-primary focus-visible:outline-none",
                   item.description && "flex-col items-start"
                 );
@@ -235,6 +239,7 @@ export function NavDropdown({
                   </NavLink>
                 );
               })}
+              </div>
             </div>
           </motion.div>
         )}
