@@ -192,7 +192,7 @@ export function HomePage() {
               "radial-gradient(60rem 30rem at 50% -10%, hsl(var(--primary) / 0.18), transparent 60%)",
           }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 pb-32 pt-10 sm:px-6 sm:pt-14 sm:pb-36 lg:px-8 lg:pt-16 lg:pb-40">
+        <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14 sm:pb-24 lg:px-8 lg:pt-16 lg:pb-28">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -222,23 +222,26 @@ export function HomePage() {
               decisions about the vehicles that matter to you.
             </motion.p>
           </motion.div>
+
+          {/* Vehicle search card — fully contained inside the hero section, so
+              the section grows to its full height and the next section always
+              starts cleanly after it */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mx-auto mt-10 w-full max-w-[1180px] rounded-[24px] border border-border bg-white px-5 py-4 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.35)] sm:px-7 sm:py-5 lg:px-9 lg:py-6"
+          >
+            <HomeSearch />
+          </motion.div>
         </div>
       </section>
 
-      {/* Floating search card — overlaps the bottom of the hero */}
-      <div className="relative z-10 mx-auto -mt-20 w-[calc(100%-3rem)] max-w-[1180px] sm:-mt-24 lg:-mt-28">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="rounded-[24px] border border-border bg-white px-5 py-4 shadow-[0_24px_60px_-24px_rgba(20,40,61,0.4)] sm:px-7 sm:py-5 lg:px-9 lg:py-6"
-        >
-          <HomeSearch />
-        </motion.div>
-      </div>
-
-      {/* Lookup types */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" aria-labelledby="lookup-types">
+      {/* Lookup types — starts only after the hero/search section has fully finished */}
+      <section
+        className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pt-14 lg:px-8 lg:pt-16"
+        aria-labelledby="lookup-types"
+      >
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
