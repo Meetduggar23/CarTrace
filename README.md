@@ -2,7 +2,7 @@
   <img src="logo/logo.png" alt="CarTrace logo" width="360" />
 </p>
 
-<p align="center">Every Vehicle Has a Story</p>
+<p align="center">Every Vehicle Has a Story width = 240  </p>
 
 CarTrace is a premium vehicle-information platform. Enter a vehicle
 registration number or a VIN and view publicly available vehicle information —
