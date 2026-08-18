@@ -49,6 +49,7 @@ export function NavSearch({
   const wrapRef = useRef<HTMLDivElement>(null);
   const focusedRef = useRef(false);
   const closeTimer = useRef<number | null>(null);
+  const loadingTimer = useRef<number | null>(null);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -79,6 +80,7 @@ export function NavSearch({
   useEffect(
     () => () => {
       if (closeTimer.current) window.clearTimeout(closeTimer.current);
+      if (loadingTimer.current) window.clearTimeout(loadingTimer.current);
     },
     []
   );
@@ -141,7 +143,7 @@ export function NavSearch({
     onSubmitted?.();
     navigate(type === "vin" ? `/vehicle/vin/${normalized}` : `/vehicle/${normalized}`);
     // The target page takes over; clear the local spinner shortly after.
-    window.setTimeout(() => setLoading(false), 700);
+    loadingTimer.current = window.setTimeout(() => setLoading(false), 700);
   }
 
   function handleSubmit(e: React.FormEvent) {

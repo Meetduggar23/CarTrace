@@ -67,9 +67,7 @@ const BikeInsurancePage = lazy(() =>
 const ServiceHistoryPage = lazy(() =>
   import("@/pages/FeaturePages").then((m) => ({ default: m.ServiceHistoryPage }))
 );
-const NewCarsPage = lazy(() =>
-  import("@/pages/FeaturePages").then((m) => ({ default: m.NewCarsPage }))
-);
+
 const UsedCarsPage = lazy(() =>
   import("@/pages/FeaturePages").then((m) => ({ default: m.UsedCarsPage }))
 );
@@ -84,6 +82,15 @@ const HelpPage = lazy(() =>
 );
 const ProfilePage = lazy(() =>
   import("@/pages/ProfilePage").then((m) => ({ default: m.ProfilePage }))
+);
+const NewCarsPage = lazy(() =>
+  import("@/pages/NewCarsPage").then((m) => ({ default: m.NewCarsPage }))
+);
+const CarDetailPage = lazy(() =>
+  import("@/pages/CarDetailPage").then((m) => ({ default: m.CarDetailPage }))
+);
+const CarBrandPage = lazy(() =>
+  import("@/pages/CarBrandPage").then((m) => ({ default: m.CarBrandPage }))
 );
 const SettingsPage = lazy(() =>
   import("@/pages/SettingsPage").then((m) => ({ default: m.SettingsPage }))
@@ -219,22 +226,6 @@ export function App() {
           }
         />
         <Route
-          path="privacy"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <PrivacyPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="terms"
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <TermsPage />
-            </Suspense>
-          }
-        />
-        <Route
           path="challan"
           element={
             <Suspense fallback={<PageLoader />}>
@@ -271,6 +262,22 @@ export function App() {
           element={
             <Suspense fallback={<PageLoader />}>
               <NewCarsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="new-cars/brand/:brand"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <CarBrandPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="new-cars/:brand/:model"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <CarDetailPage />
             </Suspense>
           }
         />
@@ -331,6 +338,25 @@ export function App() {
           }
         />
       </Route>
+
+      {/* Legal documents — rendered WITHOUT the site navbar/footer so they
+          read like professional legal pages. */}
+      <Route
+        path="privacy"
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <PrivacyPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="terms"
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <TermsPage />
+          </Suspense>
+        }
+      />
     </Routes>
   );
 }

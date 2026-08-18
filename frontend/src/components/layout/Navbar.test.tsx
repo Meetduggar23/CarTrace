@@ -14,9 +14,14 @@ vi.mock("react-router-dom", () => {
       </a>
     )
   );
-  const NavLink = React.forwardRef<HTMLAnchorElement, MockLinkProps>(
-    ({ children, to, ...props }, ref) => (
-      <a href={to} ref={ref} {...props}>
+  const NavLink = React.forwardRef<HTMLAnchorElement, MockLinkProps & { className?: string | ((state: { isActive: boolean }) => string) }>(
+    ({ children, to, className, ...props }, ref) => (
+      <a
+        href={to}
+        ref={ref}
+        className={typeof className === "function" ? className({ isActive: false }) : className}
+        {...props}
+      >
         {children}
       </a>
     )
@@ -42,7 +47,7 @@ import { Navbar } from "./Navbar";
 describe("Navbar", () => {
   it("renders brand, dropdown triggers and primary links", () => {
     render(<Navbar />);
-    expect(screen.getByText("CarTrace")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /cartrace home/i })).toBeInTheDocument();
     // Top-level dropdown triggers + primary links
     expect(screen.getByRole("button", { name: /rc details/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /buy car/i })).toBeInTheDocument();

@@ -5,6 +5,7 @@ import {
   FileCheck2,
   Gauge,
   Landmark,
+  ShieldCheck,
 } from "lucide-react";
 
 import type { VehicleRecord } from "@/lib/types";
@@ -110,7 +111,7 @@ export function VehicleDashboard({ record }: VehicleDashboardProps) {
     { value: "overview", label: "Overview", icon: Gauge, show: true },
     { value: "specs", label: "Specifications", icon: ClipboardList, show: hasSpecs },
     { value: "registration", label: "Registration", icon: FileCheck2, show: hasRegistration },
-    { value: "compliance", label: "Compliance", icon: FileCheck2, show: hasCompliance },
+    { value: "compliance", label: "Compliance", icon: ShieldCheck, show: hasCompliance },
     { value: "rto", label: "RTO", icon: Landmark, show: hasRto },
     { value: "ownership", label: "Ownership", icon: Building2, show: hasOwnership },
   ].filter((t) => t.show);

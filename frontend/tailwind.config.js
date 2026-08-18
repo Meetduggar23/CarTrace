@@ -41,7 +41,7 @@ export default {
           "Roboto",
           "sans-serif",
         ],
-        display: ["Cormorant Garamond", "Georgia", "ui-serif", "serif"],
+        display: ["Times New Roman", "Times", "Georgia", "ui-serif", "serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       keyframes: {

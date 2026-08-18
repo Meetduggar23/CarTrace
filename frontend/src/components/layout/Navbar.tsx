@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
@@ -10,11 +10,10 @@ import {
   User,
   X,
 } from "lucide-react";
-import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { BUY_CAR, INSURANCE, MORE, NEW_CAR_MENU, RC_DETAILS } from "@/lib/nav";
 import { setSelectedLocation, useSelectedLocation } from "@/lib/locations";
-import { Logo } from "@/components/common/Logo";
+import { CarTraceLogo } from "@/components/common/CarTraceLogo";
 import { NavDropdown } from "@/components/nav/NavDropdown";
 import { NavSearch } from "@/components/nav/NavSearch";
 import { LocationSelector } from "@/components/location/LocationSelector";
@@ -53,6 +52,7 @@ export function Navbar() {
   // picks a state or a registration number is auto-detected while typing.
   const location = useSelectedLocation();
   const [locationOpen, setLocationOpen] = useState(false);
+  const locationCloseTimer = useRef<number | null>(null);
   const headerRef = useRef<HTMLElement>(null);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
@@ -70,6 +70,13 @@ export function Navbar() {
     setMobileOpen(false);
     setLocationOpen(false);
   }, [pathname]);
+
+  // Clean up location close timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (locationCloseTimer.current) window.clearTimeout(locationCloseTimer.current);
+    };
+  }, []);
 
   // Close the mobile menu on outside click / Escape.
   useEffect(() => {
@@ -95,7 +102,7 @@ export function Navbar() {
     setSelectedLocation(label);
     // Close fast: the gold selection state shows briefly, then the modal
     // exits (~180ms) while the hero background crossfades in behind it.
-    window.setTimeout(() => setLocationOpen(false), 120);
+    locationCloseTimer.current = window.setTimeout(() => setLocationOpen(false), 120);
   }
 
   return (
@@ -118,10 +125,7 @@ export function Navbar() {
       >
         {/* LEFT: logo + location */}
         <div className="flex min-w-0 items-center justify-self-start">
-          <Link to="/" className="mr-2 flex shrink-0 items-center" aria-label={`${SITE.name} home`}>
-            <Logo size="sm" />
-            <span className="sr-only">{SITE.name}</span>
-          </Link>
+          <CarTraceLogo size="sm" className="mr-2" />
 
           {/* Location selector — opens the premium location modal */}
           <div className="relative hidden lg:block">

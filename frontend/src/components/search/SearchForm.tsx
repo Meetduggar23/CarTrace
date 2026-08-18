@@ -1,10 +1,10 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { History, Loader2, Search, Sparkles, X } from "lucide-react";
 import { EXAMPLE_VINS } from "@/lib/constants";
 import type { LookupType } from "@/lib/types";
-import { formatRegistration, normalizeQuery } from "@/lib/utils";
+import { cn, formatRegistration, normalizeQuery } from "@/lib/utils";
 import {
   detectLookupType,
   isValidRegistration,
@@ -26,7 +26,6 @@ import { RegistrationLocationHint } from "@/components/location/RegistrationLoca
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 
 interface SearchFormProps {
   /** Initial query (e.g. from a URL param). */
@@ -57,6 +56,14 @@ export function SearchForm({
   const [submitting, setSubmitting] = useState(false);
   const [showRecents, setShowRecents] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const blurTimer = useRef<number | null>(null);
+
+  // Clean up the blur timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (blurTimer.current) window.clearTimeout(blurTimer.current);
+    };
+  }, []);
 
   const recents = useMemo(() => getGuestHistory(), [showRecents]);
 
@@ -172,7 +179,9 @@ export function SearchForm({
               value={value}
               onChange={(e) => handleChange(e.target.value)}
               onFocus={() => setShowRecents(true)}
-              onBlur={() => setTimeout(() => setShowRecents(false), 150)}
+              onBlur={() => {
+                blurTimer.current = window.setTimeout(() => setShowRecents(false), 150);
+              }}
               placeholder={
                 placeholder ??
                 (mode === "registration"

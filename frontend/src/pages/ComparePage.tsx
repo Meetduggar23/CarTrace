@@ -135,9 +135,10 @@ export function ComparePage() {
           {/* Rows */}
           <div className="mt-4 overflow-hidden rounded-lg border border-border bg-card">
             {ROWS.map((row, i) => {
-              const [a, b] = [vehicles[0], vehicles[1]];
-              const aVal = row.get(a);
-              const bVal = row.get(b);
+              const a = vehicles[0];
+              const b = vehicles.length > 1 ? vehicles[1] : undefined;
+              const aVal = a ? row.get(a) : null;
+              const bVal = b ? row.get(b) : null;
               const differs =
                 b !== undefined &&
                 (aVal ?? null) !== (bVal ?? null) &&
@@ -158,7 +159,13 @@ export function ComparePage() {
                     )}
                   </div>
                   <Cell value={aVal} highlight={differs} />
-                  <Cell value={bVal} highlight={differs} />
+                  {b ? (
+                    <Cell value={bVal} highlight={differs} />
+                  ) : (
+                    <div className="flex items-center justify-center rounded-lg border border-dashed border-border/40 bg-card/20 py-3 text-center text-xs text-muted-foreground/50">
+                      Add a second vehicle
+                    </div>
+                  )}
                 </div>
               );
             })}

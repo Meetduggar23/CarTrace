@@ -1,4 +1,4 @@
-import { Logo } from "@/components/common/Logo";
+import { CarTraceLogo } from "@/components/common/CarTraceLogo";
 import { cn } from "@/lib/utils";
 
 interface LoadingScreenProps {
@@ -22,7 +22,7 @@ export function LoadingScreen({ label = "Loading…", fullscreen = false }: Load
         fullscreen ? "min-h-screen" : "min-h-[50vh]"
       )}
     >
-      <Logo size="xl" className="opacity-90" />
+      <CarTraceLogo size="xl" logoClassName="opacity-90" />
       <div className="flex items-center gap-3 text-sm text-[hsl(var(--on-dark-soft))]">
         <span
           className="h-5 w-5 animate-spin rounded-full border-2 border-primary/25 border-t-primary"

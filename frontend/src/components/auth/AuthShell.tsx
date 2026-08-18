@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { Logo } from "@/components/common/Logo";
+import { CarTraceLogo } from "@/components/common/CarTraceLogo";
 
 interface AuthShellProps {
   /** Short brand tagline shown under the logo on the navy band. */
@@ -40,9 +39,7 @@ export function AuthShell({
         >
           {/* Navy brand band */}
           <div className="bg-[hsl(var(--surface-dark))] px-8 pb-6 pt-8 text-center">
-            <Link to="/" aria-label="CarTrace home" className="inline-block">
-              <Logo size="md" />
-            </Link>
+            <CarTraceLogo size="md" className="justify-center" />
             <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[hsl(var(--on-dark-soft))]">
               {tagline}
             </p>

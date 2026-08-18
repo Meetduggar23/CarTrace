@@ -14,14 +14,13 @@ import {
   FlaskConical,
   Gavel,
   GitCompareArrows,
-  HelpCircle,
   Lock,
   MapPin,
   ShieldCheck,
   Sparkles,
   Wrench,
 } from "lucide-react";
-import { Accordion } from "@/components/ui/accordion";
+import { FaqSection } from "@/components/faq/FaqSection";
 import { Seo } from "@/components/common/Seo";
 import { useAuth } from "@/services/auth";
 import { LocationBackground } from "@/components/location/LocationBackground";
@@ -30,7 +29,7 @@ import { HomeSearch } from "@/components/search/HomeSearch";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FAQ_ITEMS } from "@/lib/faq";
+
 import { SITE } from "@/lib/constants";
 
 const fadeUp = {
@@ -492,22 +491,8 @@ export function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-t border-border py-16" aria-labelledby="home-faq">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="kicker mb-4 flex items-center justify-center gap-1.5">
-              <HelpCircle className="h-3.5 w-3.5" aria-hidden />
-              FAQ
-            </p>
-            <h2 id="home-faq" className="font-display text-3xl font-medium tracking-tight sm:text-4xl">
-              Frequently asked questions
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Honest answers about what {SITE.name} can and cannot show.
-            </p>
-          </div>
-          <Accordion items={FAQ_ITEMS} className="mt-8" />
-        </div>
+      <section className="border-t border-border" aria-labelledby="home-faq">
+        <FaqSection />
       </section>
 
       {/* Disclaimer */}
