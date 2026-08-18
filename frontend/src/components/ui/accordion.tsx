@@ -22,9 +22,9 @@ export function Accordion({ items, className }: AccordionProps) {
       {items.map((item) => (
         <details
           key={item.value}
-          className="group rounded-2xl border border-border bg-card transition-colors open:border-primary/40"
+          className="group rounded-lg border border-border bg-card transition-colors open:border-primary/40"
         >
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 text-sm font-semibold transition-colors hover:bg-secondary/40 [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-sm font-semibold transition-colors hover:bg-secondary/40 [&::-webkit-details-marker]:hidden">
             {item.question}
             <ChevronDown
               className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"

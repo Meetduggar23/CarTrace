@@ -243,7 +243,7 @@ export function RtoPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="mx-auto mt-10 max-w-2xl rounded-2xl border border-border bg-card/70 p-5 shadow-glow backdrop-blur-xl sm:p-6"
+            className="mx-auto mt-10 max-w-2xl rounded-lg border border-border bg-card/70 p-5 backdrop-blur-xl sm:p-6"
           >
             <SearchForm size="lg" />
             <p className="mt-4 text-center text-xs text-muted-foreground">
@@ -267,7 +267,7 @@ export function RtoPage() {
                 <Link
                   key={chip.href}
                   to={chip.href}
-                  className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
+                  className="flex items-center gap-1.5 rounded-sm border border-border bg-card px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
                 >
                   <MapPin className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />
                   {chip.label}
@@ -296,7 +296,7 @@ export function RtoPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: i * 0.1 }}
-              className="rounded-2xl border border-border bg-card p-6"
+              className="rounded-lg border border-border bg-card p-6"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
                 <step.icon className="h-5 w-5 text-primary" aria-hidden />
@@ -359,7 +359,7 @@ export function RtoPage() {
               <Link
                 key={code}
                 to={`/rto/state/${code}`}
-                className="rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
+                className="rounded-sm border border-border bg-card px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-primary/50 hover:text-primary"
               >
                 {code}
               </Link>
@@ -388,7 +388,7 @@ export function RtoPage() {
                     <li key={rto.code}>
                       <Link
                         to={`/rto/${rto.code}`}
-                        className="flex items-start gap-4 rounded-2xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40"
+                        className="flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40"
                       >
                         <span className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono text-xs font-bold text-primary">
                           {rto.code}
@@ -438,7 +438,7 @@ export function RtoPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: i * 0.08 }}
-              className="relative rounded-2xl border border-border bg-card p-6"
+              className="relative rounded-lg border border-border bg-card p-6"
             >
               <span className="absolute right-5 top-5 font-display text-3xl font-extrabold text-primary/15">
                 Step {i + 1}
@@ -455,7 +455,7 @@ export function RtoPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.45, delay: 0.4 }}
-            className="flex flex-col items-start justify-center rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-6"
+            className="flex flex-col items-start justify-center rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6"
           >
             <h3 className="font-display text-base font-semibold">
               What details can you check online?
@@ -538,7 +538,7 @@ export function RtoPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="rounded-2xl border border-border bg-card p-5 text-center"
+              className="rounded-lg border border-border bg-card p-5 text-center"
             >
               <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
                 <service.icon className="h-5 w-5 text-primary" aria-hidden />
@@ -571,7 +571,7 @@ export function RtoPage() {
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col items-start justify-between gap-6 rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-accent/10 p-8 md:flex-row md:items-center"
+          className="flex flex-col items-start justify-between gap-6 rounded-lg border border-border bg-gradient-to-br from-primary/10 via-card to-accent/10 p-8 md:flex-row md:items-center"
         >
           <div className="max-w-xl">
             <h2 className="font-display text-2xl font-bold">
@@ -589,7 +589,7 @@ export function RtoPage() {
           </Link>
         </motion.div>
 
-        <div className="mt-8 rounded-2xl border border-border bg-muted/40 p-6">
+        <div className="mt-8 rounded-lg border border-border bg-muted/40 p-6">
           <h3 className="flex items-center gap-2 font-display text-sm font-semibold">
             <ShieldCheck className="h-4 w-4 text-primary" aria-hidden />
             Privacy & data disclaimer

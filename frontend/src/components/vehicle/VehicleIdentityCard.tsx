@@ -55,7 +55,7 @@ export function VehicleIdentityCard({ record }: VehicleIdentityCardProps) {
               {record.registrationNumber ? (
                 <div className="flex items-center justify-between gap-4 rounded-lg bg-card px-3 py-2">
                   <dt className="text-muted-foreground">Registration</dt>
-                  <dd className="font-mono font-semibold tracking-wide">
+                  <dd className="min-w-0 break-words font-mono font-semibold tracking-wide">
                     {formatRegistration(record.registrationNumber)}
                   </dd>
                 </div>
@@ -63,7 +63,7 @@ export function VehicleIdentityCard({ record }: VehicleIdentityCardProps) {
               {record.vin ? (
                 <div className="flex items-center justify-between gap-4 rounded-lg bg-card px-3 py-2">
                   <dt className="text-muted-foreground">VIN</dt>
-                  <dd className="font-mono font-semibold tracking-wide">
+                  <dd className="min-w-0 break-words font-mono font-semibold tracking-wide">
                     {record.vin}
                   </dd>
                 </div>

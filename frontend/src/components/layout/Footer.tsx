@@ -7,11 +7,28 @@ const COLUMNS: { heading: string; links: { to: string; label: string }[] }[] = [
   {
     heading: "Product",
     links: [
-      { to: "/vehicle", label: "Vehicle Lookup" },
-      { to: "/vin-decoder", label: "VIN Decoder" },
+      { to: "/vehicle", label: "RC Details" },
+      { to: "/challan", label: "Challan Search" },
+      { to: "/car-insurance", label: "Car Insurance" },
+      { to: "/bike-insurance", label: "Bike Insurance" },
+      { to: "/service-history", label: "Service History" },
+      { to: "/new-cars", label: "New Cars" },
+      { to: "/used-cars", label: "Used Cars" },
+      { to: "/fastag", label: "FASTag" },
       { to: "/rto", label: "RTO Directory" },
       { to: "/compare", label: "Compare" },
       { to: "/providers", label: "Data Providers" },
+    ],
+  },
+  {
+    heading: "Tools",
+    links: [
+      { to: "/vehicle", label: "Vehicle Lookup" },
+      { to: "/vin-decoder", label: "VIN Decoder" },
+      { to: "/saved", label: "Saved Vehicles" },
+      { to: "/history", label: "Search History" },
+      { to: "/contact", label: "Contact Us" },
+      { to: "/help", label: "Help" },
     ],
   },
   {
@@ -26,23 +43,23 @@ const COLUMNS: { heading: string; links: { to: string; label: string }[] }[] = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card/40">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+    <footer className="border-t border-[hsl(var(--on-dark)/0.12)] bg-[hsl(var(--surface-dark))] text-[hsl(var(--on-dark))]">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <div className="flex flex-col items-start gap-3">
               <Link to="/" aria-label={`${SITE.name} home`}>
                 <Logo size="md" />
               </Link>
-              <span className="text-[11px] font-medium tracking-wide text-muted-foreground">
+              <span className="text-[11px] font-medium tracking-wide text-[hsl(var(--on-dark-soft))]">
                 {SITE.tagline}
               </span>
             </div>
-            <p className="mt-4 max-w-sm text-sm text-muted-foreground">
+            <p className="mt-4 max-w-sm text-sm text-[hsl(var(--on-dark-soft))]">
               Check vehicle specifications, registration information and available
               vehicle records in one place.
             </p>
-            <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+            <p className="mt-4 flex items-center gap-2 text-xs text-[hsl(var(--on-dark-soft))]">
               <ShieldCheck className="h-4 w-4" />
               Data powered by supported third-party/public APIs.
             </p>
@@ -50,13 +67,15 @@ export function Footer() {
 
           {COLUMNS.map((col) => (
             <nav key={col.heading} aria-label={col.heading}>
-              <h3 className="text-sm font-semibold">{col.heading}</h3>
+              <h3 className="text-sm font-semibold text-[hsl(var(--on-dark))]">
+                {col.heading}
+              </h3>
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.to}>
                     <Link
                       to={link.to}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-sm text-[hsl(var(--on-dark-soft))] transition-colors hover:text-[hsl(var(--on-dark))]"
                     >
                       {link.label}
                     </Link>
@@ -67,17 +86,9 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-10 border-t border-border pt-6">
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {SITE.name} is an independent vehicle-information platform. It is not an
-            RTO authority and is not affiliated with CarInfo or any government body.
-            Vehicle information depends on the selected data provider and regional
-            availability; always verify records independently before making financial
-            or legal decisions.
-          </p>
-          <p className="mt-3 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} {SITE.name}. All vehicle data belongs to its
-            respective sources.
+        <div className="mt-10 border-t border-[hsl(var(--on-dark)/0.12)] pt-6">
+          <p className="text-xs leading-relaxed text-[hsl(var(--on-dark-soft))]">
+            All rights reserved by CarTrace 2025 made by duggar pvt ltd
           </p>
         </div>
       </div>

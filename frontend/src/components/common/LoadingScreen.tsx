@@ -1,4 +1,5 @@
 import { Logo } from "@/components/common/Logo";
+import { cn } from "@/lib/utils";
 
 interface LoadingScreenProps {
   /** Accessible description of what is loading. */
@@ -9,21 +10,20 @@ interface LoadingScreenProps {
 
 /**
  * Branded loading state used while lazy routes / page data load.
- * Replaces a bare spinner with the logo + subtle progress indicator.
+ * Renders on the dark product surface so the gold logo stays readable.
  */
 export function LoadingScreen({ label = "Loading…", fullscreen = false }: LoadingScreenProps) {
   return (
     <div
       role="status"
       aria-live="polite"
-      className={
-        fullscreen
-          ? "flex min-h-screen flex-col items-center justify-center gap-6"
-          : "flex min-h-[50vh] flex-col items-center justify-center gap-6"
-      }
+      className={cn(
+        "flex flex-col items-center justify-center gap-6 bg-[hsl(var(--surface-dark))]",
+        fullscreen ? "min-h-screen" : "min-h-[50vh]"
+      )}
     >
       <Logo size="xl" className="opacity-90" />
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+      <div className="flex items-center gap-3 text-sm text-[hsl(var(--on-dark-soft))]">
         <span
           className="h-5 w-5 animate-spin rounded-full border-2 border-primary/25 border-t-primary"
           aria-hidden

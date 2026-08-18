@@ -20,8 +20,8 @@ export function RtoCodePage() {
     return (
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
         <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-40 w-full rounded-2xl" />
-        <Skeleton className="h-48 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-lg" />
+        <Skeleton className="h-48 w-full rounded-lg" />
       </div>
     );
   }
@@ -58,7 +58,7 @@ export function RtoCodePage() {
         <ArrowLeft className="h-4 w-4" aria-hidden /> RTO directory
       </Link>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-soft">
+      <div className="mt-6 rounded-lg border border-border bg-card p-6 shadow-soft">
         <div className="flex flex-wrap items-center gap-4">
           <span className="flex h-16 w-20 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 font-mono text-lg font-bold text-primary">
             {rto.code}
@@ -96,7 +96,7 @@ export function RtoCodePage() {
         </dl>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-border bg-card p-6">
+      <div className="mt-6 rounded-lg border border-border bg-card p-6">
         <h2 className="font-display text-lg font-semibold">Services</h2>
         <ul className="mt-3 flex flex-wrap gap-2">
           {rto.services.map((service) => (
@@ -113,7 +113,7 @@ export function RtoCodePage() {
         </p>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-dashed border-border bg-card/40 p-5 text-center">
+      <div className="mt-6 rounded-lg border border-dashed border-border bg-card/40 p-5 text-center">
         <Search className="mx-auto h-5 w-5 text-muted-foreground" aria-hidden />
         <p className="mt-2 text-sm text-muted-foreground">
           Looking for vehicle information?{" "}

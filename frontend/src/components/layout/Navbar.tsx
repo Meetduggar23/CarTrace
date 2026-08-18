@@ -6,13 +6,25 @@ import {
   Heart,
   History,
   LogOut,
+  MapPin,
   Menu,
-  Search,
+  User,
   X,
 } from "lucide-react";
 import { SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import {
+  BUY_CAR,
+  FEATURES,
+  INSURANCE,
+  LOCATIONS,
+  LOCATION_STORAGE_KEY,
+  MORE,
+  VEHICLE_INFO,
+} from "@/lib/nav";
 import { Logo } from "@/components/common/Logo";
+import { NavDropdown } from "@/components/nav/NavDropdown";
+import { NavSearch } from "@/components/nav/NavSearch";
 import { useAuth } from "@/services/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,19 +36,35 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const NAV_LINKS = [
-  { to: "/vehicle", label: "Vehicle Check" },
-  { to: "/rto", label: "RTO" },
-  { to: "/compare", label: "Compare" },
-  { to: "/saved", label: "Saved Vehicles" },
+const DROPDOWN_GROUPS = [
+  { label: "Vehicle Info", items: VEHICLE_INFO },
+  { label: "Buy Car", items: BUY_CAR },
+  { label: "Insurance", items: INSURANCE },
+  { label: "More", items: MORE },
 ];
+
+/** True when the current route lives under one of the given paths. */
+function pathActive(pathname: string, paths: string[]): boolean {
+  return paths.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+function readLocation(): string {
+  try {
+    return localStorage.getItem(LOCATION_STORAGE_KEY) ?? "India";
+  } catch {
+    return "India";
+  }
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [location, setLocation] = useState<string>(readLocation);
+  const [locationOpen, setLocationOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
+  const locationHook = useLocation();
+  const pathname = locationHook.pathname;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -45,73 +73,164 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close the mobile menu on navigation.
+  // Close the mobile menu and location dropdown on navigation.
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname]);
+    setLocationOpen(false);
+  }, [pathname]);
+
+  // Close the location dropdown on outside click / Escape.
+  useEffect(() => {
+    if (!locationOpen) return;
+    function onPointerDown(e: PointerEvent) {
+      const target = e.target as Node;
+      if (!document.getElementById("location-selector")?.contains(target)) {
+        setLocationOpen(false);
+      }
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setLocationOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [locationOpen]);
+
+  function chooseLocation(label: string) {
+    setLocation(label);
+    setLocationOpen(false);
+    try {
+      localStorage.setItem(LOCATION_STORAGE_KEY, label);
+    } catch {
+      // ignore
+    }
+  }
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full transition-all duration-300",
-        scrolled
-          ? "border-b border-border bg-background/85 backdrop-blur-xl shadow-soft"
-          : "border-b border-transparent bg-background/40 backdrop-blur-md"
+        "sticky top-0 z-50 w-full border-b bg-[hsl(var(--surface-dark))] text-[hsl(var(--on-dark))] transition-shadow duration-300",
+        scrolled && "shadow-lg"
       )}
     >
-      <nav
-        className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
-        aria-label="Main navigation"
-      >
-        {/* Brand */}
-        <Link to="/" className="flex items-center" aria-label={`${SITE.name} home`}>
-          <Logo size="sm" />
-          <span className="sr-only">{SITE.name}</span>
-        </Link>
+      {/* ============ Row 1: main bar ============ */}
+      <div className="border-b border-white/10">
+        <nav
+          className="mx-auto flex h-16 max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8"
+          aria-label="Main navigation"
+        >
+          {/* Brand */}
+          <Link to="/" className="mr-3 flex items-center" aria-label={`${SITE.name} home`}>
+            <Logo size="sm" />
+            <span className="sr-only">{SITE.name}</span>
+          </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((link) => (
+          {/* Location selector */}
+          <div id="location-selector" className="relative hidden lg:block">
+            <button
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={locationOpen}
+              onClick={() => setLocationOpen((v) => !v)}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors",
+                "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]",
+                locationOpen && "bg-white/5 text-primary"
+              )}
+            >
+              <MapPin className="h-4 w-4 text-primary" aria-hidden />
+              <span className="max-w-[7rem] truncate">{location}</span>
+              <ChevronDown
+                className={cn("h-3.5 w-3.5 transition-transform duration-200", locationOpen && "rotate-180")}
+                aria-hidden
+              />
+            </button>
+            <AnimatePresence>
+              {locationOpen && (
+                <motion.ul
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15 }}
+                  role="listbox"
+                  aria-label="Select location"
+                  className="absolute left-0 top-full z-50 mt-2 max-h-72 w-52 overflow-y-auto rounded-lg border border-border bg-popover p-1.5 text-popover-foreground shadow-lg"
+                >
+                  {LOCATIONS.map((loc) => (
+                    <li key={loc.label}>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={location === loc.label}
+                        onClick={() => chooseLocation(loc.label)}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 hover:text-primary",
+                          location === loc.label && "bg-primary/10 font-medium text-primary"
+                        )}
+                      >
+                        <MapPin className="h-3.5 w-3.5" aria-hidden />
+                        {loc.label}
+                      </button>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Desktop dropdowns */}
+          <div className="hidden items-center lg:flex">
+            {DROPDOWN_GROUPS.map((group) => (
+              <NavDropdown
+                key={group.label}
+                label={group.label}
+                items={group.items}
+                active={pathActive(
+                  pathname,
+                  group.items.map((i) => i.to)
+                )}
+              />
+            ))}
             <NavLink
-              key={link.to}
-              to={link.to}
+              to="/contact"
               className={({ isActive }) =>
                 cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                    ? "bg-white/5 text-primary"
+                    : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
                 )
               }
             >
-              {link.label}
+              Contact Us
             </NavLink>
-          ))}
-        </div>
+          </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Search a vehicle"
-            onClick={() => navigate("/vehicle")}
-            className="hidden sm:inline-flex"
-          >
-            <Search className="h-4 w-4" />
-          </Button>
+          {/* Desktop search */}
+          <NavSearch className="ml-auto hidden w-64 lg:block" />
 
-          {/* Auth */}
+          {/* User / login */}
           {isAuthenticated && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="hidden gap-2 md:inline-flex">
-                  <span className="max-w-[10rem] truncate">{user.name}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                <Button
+                  variant="ghost"
+                  className="ml-1 hidden h-9 w-9 rounded-full p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
+                  aria-label="Account menu"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+                <DropdownMenuLabel className="pt-0 font-normal text-muted-foreground">
+                  {user.email}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate("/saved")}>
                   <Heart className="h-4 w-4" /> Saved Vehicles
@@ -126,31 +245,90 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden items-center gap-2 md:flex">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
-                Login
-              </Button>
-              <Button size="sm" onClick={() => navigate("/signup")}>
-                Sign up
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-1 h-9 w-9 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
+              aria-label="Log in"
+              title="Log in"
+              onClick={() => navigate("/login")}
+            >
+              <User className="h-5 w-5" />
+            </Button>
           )}
 
           {/* Mobile menu toggle */}
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="ml-1 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] lg:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
-      {/* Mobile menu */}
+      {/* ============ Row 2: mobile search ============ */}
+      <div className="border-b border-white/10 px-4 py-2 lg:hidden">
+        <NavSearch onSubmitted={() => setMobileOpen(false)} />
+      </div>
+
+      {/* ============ Row 3: feature bar ============ */}
+      <div className="hidden border-b border-white/10 lg:block">
+        <nav
+          className="mx-auto grid max-w-7xl grid-cols-8 px-4 sm:px-6 lg:px-8"
+          aria-label="Vehicle features"
+        >
+          {FEATURES.map((feature) => (
+            <NavLink
+              key={feature.href}
+              to={feature.href}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center justify-center gap-2 border-b-2 py-3 text-sm font-medium transition-colors",
+                  isActive
+                    ? "border-primary bg-white/5 text-primary"
+                    : "border-transparent text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
+                )
+              }
+            >
+              <feature.icon className="h-4 w-4" aria-hidden />
+              {feature.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+
+      {/* Mobile feature bar — horizontally scrollable, scrollbar hidden */}
+      <div className="overflow-x-auto border-b border-white/10 lg:hidden">
+        <nav
+          className="flex w-max min-w-full gap-1 px-3 py-2"
+          aria-label="Vehicle features"
+        >
+          {FEATURES.map((feature) => (
+            <NavLink
+              key={feature.href}
+              to={feature.href}
+              className={({ isActive }) =>
+                cn(
+                  "flex shrink-0 flex-col items-center gap-1 rounded-lg px-4 py-2 text-xs font-medium transition-colors",
+                  isActive
+                    ? "bg-white/10 text-primary"
+                    : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
+                )
+              }
+            >
+              <feature.icon className="h-5 w-5" aria-hidden />
+              {feature.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+
+      {/* ============ Mobile menu panel ============ */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -158,41 +336,107 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-border bg-background/95 backdrop-blur-xl md:hidden"
+            className="overflow-hidden border-b border-white/10 bg-[hsl(var(--surface-dark))] lg:hidden"
           >
-            <div className="flex flex-col gap-1 px-4 py-4">
-              {NAV_LINKS.map((link) => (
+            <div className="flex flex-col gap-5 px-4 py-5">
+              {/* Location */}
+              <div>
+                <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
+                  <MapPin className="h-3.5 w-3.5 text-primary" aria-hidden /> Location
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {LOCATIONS.map((loc) => (
+                    <button
+                      key={loc.label}
+                      type="button"
+                      onClick={() => chooseLocation(loc.label)}
+                      className={cn(
+                        "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                        location === loc.label
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-white/15 text-[hsl(var(--on-dark-soft))] hover:border-primary/50 hover:text-[hsl(var(--on-dark))]"
+                      )}
+                    >
+                      {loc.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Link groups */}
+              {DROPDOWN_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <p className="text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
+                    {group.label}
+                  </p>
+                  <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1">
+                    {group.items.map((item) => (
+                      <li key={item.label}>
+                        <NavLink
+                          to={item.to}
+                          className={({ isActive }) =>
+                            cn(
+                              "block rounded-md px-2 py-1.5 text-sm transition-colors",
+                              isActive
+                                ? "bg-white/10 text-primary"
+                                : "text-[hsl(var(--on-dark))] hover:bg-white/5 hover:text-primary"
+                            )
+                          }
+                        >
+                          {item.label}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              {/* Contact + auth */}
+              <div className="border-t border-white/10 pt-4">
                 <NavLink
-                  key={link.to}
-                  to={link.to}
+                  to="/contact"
                   className={({ isActive }) =>
                     cn(
-                      "rounded-lg px-3 py-2.5 text-sm font-medium",
-                      isActive ? "bg-secondary text-foreground" : "text-muted-foreground"
+                      "block rounded-md px-2 py-2 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-white/10 text-primary"
+                        : "text-[hsl(var(--on-dark))] hover:bg-white/5 hover:text-primary"
                     )
                   }
                 >
-                  {link.label}
+                  Contact Us
                 </NavLink>
-              ))}
-              <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
-                {isAuthenticated ? (
-                  <>
-                    <Button variant="outline" onClick={() => navigate("/history")}>
-                      <History className="h-4 w-4" /> Search History
-                    </Button>
-                    <Button variant="ghost" onClick={logout}>
-                      <LogOut className="h-4 w-4" /> Log out ({user?.name})
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline" onClick={() => navigate("/login")}>
-                      Login
-                    </Button>
-                    <Button onClick={() => navigate("/signup")}>Sign up</Button>
-                  </>
-                )}
+                <div className="mt-3 flex flex-col gap-2">
+                  {isAuthenticated ? (
+                    <>
+                      <Button
+                        variant="outline"
+                        onClick={() => navigate("/history")}
+                        className="border-white/15 bg-transparent text-[hsl(var(--on-dark))] hover:bg-white/5"
+                      >
+                        <History className="h-4 w-4" /> Search History
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={logout}
+                        className="text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
+                      >
+                        <LogOut className="h-4 w-4" /> Log out ({user?.name})
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        onClick={() => navigate("/login")}
+                        className="border-white/15 bg-transparent text-[hsl(var(--on-dark))] hover:bg-white/5"
+                      >
+                        Log in
+                      </Button>
+                      <Button onClick={() => navigate("/signup")}>Sign up</Button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>

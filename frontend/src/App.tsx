@@ -54,6 +54,35 @@ const NotFoundPage = lazy(() =>
   import("@/pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage }))
 );
 
+// Placeholder feature pages behind the navbar feature bar / dropdowns.
+const ChallanPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.ChallanPage }))
+);
+const CarInsurancePage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.CarInsurancePage }))
+);
+const BikeInsurancePage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.BikeInsurancePage }))
+);
+const ServiceHistoryPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.ServiceHistoryPage }))
+);
+const NewCarsPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.NewCarsPage }))
+);
+const UsedCarsPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.UsedCarsPage }))
+);
+const FastagPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.FastagPage }))
+);
+const ContactPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.ContactPage }))
+);
+const HelpPage = lazy(() =>
+  import("@/pages/FeaturePages").then((m) => ({ default: m.HelpPage }))
+);
+
 function PageLoader() {
   return <LoadingScreen />;
 }
@@ -196,6 +225,78 @@ export function App() {
           element={
             <Suspense fallback={<PageLoader />}>
               <TermsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="challan"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <ChallanPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="car-insurance"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <CarInsurancePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="bike-insurance"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <BikeInsurancePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="service-history"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <ServiceHistoryPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="new-cars"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <NewCarsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="used-cars"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <UsedCarsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="fastag"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <FastagPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="contact"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <ContactPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="help"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <HelpPage />
             </Suspense>
           }
         />

@@ -4,57 +4,66 @@
 
 @layer base {
   /*
-   * AutoCheck single theme — premium automotive palette:
-   *   Black #0A0A0A · Gold #D4AF37 · Deep Burgundy #5A0F1B · Warm Ivory #F5F0E6
+   * CarTrace single theme — premium automotive palette:
+   *   White #FFFFFF · Gold #D4AF37 · Dark navy #14283D · Light gray sections
    * The app ships with one fixed theme (no light/dark toggle).
    */
   :root {
-    --background: 0 0% 4%;
-    --foreground: 40 43% 93%;
-    --card: 25 6% 8%;
-    --card-foreground: 40 43% 93%;
-    --popover: 25 6% 9%;
-    --popover-foreground: 40 43% 93%;
+    --background: 0 0% 100%;
+    --foreground: 211 51% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 211 51% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 211 51% 16%;
     --primary: 46 65% 52%;
-    --primary-foreground: 0 0% 4%;
-    --secondary: 25 6% 11%;
-    --secondary-foreground: 40 30% 90%;
-    --muted: 25 6% 9%;
-    --muted-foreground: 40 12% 62%;
-    --accent: 350 71% 21%;
-    --accent-foreground: 40 43% 93%;
-    --border: 25 8% 15%;
-    --input: 25 8% 15%;
+    --primary-foreground: 211 51% 16%;
+    --secondary: 210 14% 95%;
+    --secondary-foreground: 211 51% 16%;
+    --muted: 210 14% 96%;
+    --muted-foreground: 211 12% 40%;
+    --accent: 211 51% 16%;
+    --accent-foreground: 0 0% 100%;
+    --border: 210 14% 88%;
+    --input: 210 14% 88%;
     --ring: 46 65% 52%;
-    --success: 140 55% 48%;
-    --warning: 38 85% 52%;
-    --destructive: 0 75% 55%;
-    --radius: 1rem;
+    --success: 140 52% 40%;
+    --warning: 38 85% 45%;
+    --destructive: 0 65% 48%;
+    --radius: 0.75rem;
+    /* Dark navy surfaces (navbar, hero band, footer) */
+    --surface-dark: 211 51% 16%;
+    --surface-dark-elevated: 211 44% 22%;
+    --on-dark: 0 0% 100%;
+    --on-dark-soft: 210 14% 74%;
   }
 
   /* Kept so the fixed `dark` class resolves to the same single palette. */
   .dark {
-    --background: 0 0% 4%;
-    --foreground: 40 43% 93%;
-    --card: 25 6% 8%;
-    --card-foreground: 40 43% 93%;
-    --popover: 25 6% 9%;
-    --popover-foreground: 40 43% 93%;
+    --background: 0 0% 100%;
+    --foreground: 211 51% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 211 51% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 211 51% 16%;
     --primary: 46 65% 52%;
-    --primary-foreground: 0 0% 4%;
-    --secondary: 25 6% 11%;
-    --secondary-foreground: 40 30% 90%;
-    --muted: 25 6% 9%;
-    --muted-foreground: 40 12% 62%;
-    --accent: 350 71% 21%;
-    --accent-foreground: 40 43% 93%;
-    --border: 25 8% 15%;
-    --input: 25 8% 15%;
+    --primary-foreground: 211 51% 16%;
+    --secondary: 210 14% 95%;
+    --secondary-foreground: 211 51% 16%;
+    --muted: 210 14% 96%;
+    --muted-foreground: 211 12% 40%;
+    --accent: 211 51% 16%;
+    --accent-foreground: 0 0% 100%;
+    --border: 210 14% 88%;
+    --input: 210 14% 88%;
     --ring: 46 65% 52%;
-    --success: 140 55% 48%;
-    --warning: 38 85% 52%;
-    --destructive: 0 75% 55%;
-    --radius: 1rem;
+    --success: 140 52% 40%;
+    --warning: 38 85% 45%;
+    --destructive: 0 65% 48%;
+    --radius: 0.75rem;
+    --surface-dark: 211 51% 16%;
+    --surface-dark-elevated: 211 44% 22%;
+    --on-dark: 0 0% 100%;
+    --on-dark-soft: 210 14% 74%;
   }
 
   * {
@@ -80,17 +89,36 @@
     outline-offset: 2px;
   }
 
-  /* Thin, elegant scrollbar */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+  /* Hide scrollbars visually everywhere (page + nested containers)
+     without disabling scrolling — wheel, touchpad, keyboard and
+     touch all keep working. */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE / legacy Edge */
   }
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 8px;
+  *::-webkit-scrollbar {
+    display: none; /* Chrome / Safari / Edge */
   }
-  ::-webkit-scrollbar-track {
-    background: transparent;
+
+  /* Guard against horizontal page overflow. overflow-x on html+body does
+     not prevent vertical scrolling and keeps position: sticky intact. */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Layout hardening: keep every page inside its own container. */
+  #root,
+  main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Images and inline SVGs must never exceed their parent. */
+  img,
+  svg,
+  video {
+    max-width: 100%;
   }
 }
 
@@ -100,11 +128,16 @@
   }
 
   .card-surface {
-    @apply rounded-2xl border border-border bg-card shadow-soft;
+    @apply rounded-lg border border-border bg-card;
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[#EAC95A] via-primary to-[#B8902A] bg-clip-text text-transparent;
+  }
+
+  /* Small uppercase section label — editorial kicker instead of pill badges. */
+  .kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground;
   }
 
   .skeleton-shimmer {

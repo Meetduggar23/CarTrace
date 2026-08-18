@@ -46,7 +46,7 @@ export function RtoFilterPage({ filter }: { filter: "state" | "city" }) {
               <li key={rto.code}>
                 <Link
                   to={`/rto/${rto.code}`}
-                  className="flex items-start gap-4 rounded-2xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40"
+                  className="flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/40"
                 >
                   <span className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono text-xs font-bold text-primary">
                     {rto.code}

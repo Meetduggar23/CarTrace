@@ -104,7 +104,7 @@ export function SavedVehiclesPage() {
               return (
                 <li
                   key={vehicle.id}
-                  className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary/40"
+                  className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40"
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -114,7 +114,7 @@ export function SavedVehiclesPage() {
                         <Badge variant="muted">{vehicle.model ?? vehicle.manufacturer ?? "vehicle"}</Badge>
                       )}
                     </div>
-                    <p className="mt-1 font-mono text-sm text-muted-foreground">
+                    <p className="mt-1 min-w-0 break-words font-mono text-sm text-muted-foreground">
                       {formatRegistration(vehicle.registrationNumber) ?? vehicle.vin}
                       {vehicle.modelYear ? ` · ${vehicle.modelYear}` : ""}
                       {vehicle.fuelType ? ` · ${vehicle.fuelType}` : ""}

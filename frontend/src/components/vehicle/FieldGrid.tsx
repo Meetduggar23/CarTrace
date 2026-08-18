@@ -38,7 +38,7 @@ export function FieldGrid({ fields, columns = 2 }: FieldGridProps) {
             </dt>
             <dd
               className={cn(
-                "mt-1 text-sm font-medium",
+                "mt-1 min-w-0 break-words text-sm font-medium",
                 f.highlighted ? "text-primary" : !available ? "text-muted-foreground/70 italic" : "text-foreground"
               )}
             >

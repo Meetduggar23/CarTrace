@@ -85,7 +85,7 @@ export function HistoryPage() {
                   className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 transition-all hover:border-primary/40"
                 >
                   <span className="flex min-w-0 items-center gap-3">
-                    <span className="font-mono font-semibold tracking-wide">
+                    <span className="min-w-0 break-words font-mono font-semibold tracking-wide">
                       {entry.lookupType === "registration"
                         ? formatRegistration(entry.query)
                         : entry.query}
@@ -95,7 +95,7 @@ export function HistoryPage() {
                         {[entry.result.manufacturer, entry.result.model].filter(Boolean).join(" ")}
                       </span>
                     )}
-                    <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    <span className="shrink-0 rounded-sm bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                       {entry.lookupType}
                     </span>
                   </span>

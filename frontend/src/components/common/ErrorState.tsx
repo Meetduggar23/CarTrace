@@ -77,14 +77,14 @@ export function ErrorState({ code, message, onRetry, compact }: ErrorStateProps)
       className={
         compact
           ? "flex items-start gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4"
-          : "flex flex-col items-center justify-center rounded-2xl border border-border bg-card/50 px-6 py-14 text-center"
+          : "flex flex-col items-center justify-center rounded-lg border border-border bg-card/50 px-6 py-14 text-center"
       }
     >
       <div
         className={
           compact
             ? "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10"
-            : "mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10"
+            : "mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-destructive/10"
         }
       >
         <Icon className={compact ? "h-5 w-5 text-destructive" : "h-7 w-7 text-destructive"} />

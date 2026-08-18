@@ -10,11 +10,11 @@ export function VehicleSkeleton() {
       aria-label="Loading vehicle information"
       role="status"
     >
-      <Skeleton className="h-64 w-full rounded-2xl" />
+      <Skeleton className="h-64 w-full rounded-lg" />
       <Skeleton className="h-12 w-full max-w-md rounded-xl" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 9 }).map((_, i) => (
-          <div key={i} className="space-y-2 rounded-2xl border border-border bg-card p-4">
+          <div key={i} className="space-y-2 rounded-lg border border-border bg-card p-4">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-4 w-32" />
           </div>

@@ -41,13 +41,8 @@ export default {
           "Roboto",
           "sans-serif",
         ],
-        display: [
-          "Sora",
-          "Inter",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-        ],
+        display: ["Cormorant Garamond", "Georgia", "ui-serif", "serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       keyframes: {
         "accordion-down": {

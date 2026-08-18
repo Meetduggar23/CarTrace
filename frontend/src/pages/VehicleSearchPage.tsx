@@ -78,7 +78,7 @@ export function VehicleSearchPage() {
                   className="flex items-center justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3 transition-all hover:border-primary/40"
                 >
                   <span className="flex min-w-0 items-center gap-3">
-                    <span className="font-mono font-semibold tracking-wide">
+                    <span className="min-w-0 break-words font-mono font-semibold tracking-wide">
                       {entry.lookupType === "registration"
                         ? formatRegistration(entry.query)
                         : entry.query}

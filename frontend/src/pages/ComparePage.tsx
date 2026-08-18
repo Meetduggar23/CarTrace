@@ -86,7 +86,7 @@ export function ComparePage() {
             {vehicles.map((vehicle) => (
               <div
                 key={vehicle.id}
-                className="rounded-2xl border border-border bg-card p-4"
+                className="rounded-lg border border-border bg-card p-4"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
@@ -120,7 +120,7 @@ export function ComparePage() {
               </div>
             ))}
             {vehicles.length < 2 && (
-              <div className="flex items-center justify-center rounded-2xl border border-dashed border-border bg-card/40">
+              <div className="flex items-center justify-center rounded-lg border border-dashed border-border bg-card/40">
                 <Link
                   to="/vehicle"
                   className="flex flex-col items-center gap-2 px-4 py-6 text-center text-sm text-muted-foreground transition-colors hover:text-primary"
@@ -133,7 +133,7 @@ export function ComparePage() {
           </div>
 
           {/* Rows */}
-          <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="mt-4 overflow-hidden rounded-lg border border-border bg-card">
             {ROWS.map((row, i) => {
               const [a, b] = [vehicles[0], vehicles[1]];
               const aVal = row.get(a);

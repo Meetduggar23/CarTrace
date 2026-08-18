@@ -255,7 +255,7 @@ export function SearchForm({
         {/* Validation hint */}
         <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
           {value && !error && detected && detected !== mode && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1 font-medium text-accent">
+            <span className="inline-flex items-center gap-1 rounded-sm bg-accent/10 px-2.5 py-1 font-medium text-accent">
               <Sparkles className="h-3 w-3" aria-hidden />
               Detected as {detected === "vin" ? "VIN" : "registration number"}
             </span>
