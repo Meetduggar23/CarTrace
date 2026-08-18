@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="frontend\dist\logo.png" alt="CarTrace logo" width="360" />
+  <img src="frontend/public/logo.png" alt="CarTrace logo" width="360" />
 </p>
 
 <h1 align="center">Every Vehicle Has a Story</h1>
