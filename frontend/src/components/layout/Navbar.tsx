@@ -19,7 +19,8 @@ import {
   LOCATIONS,
   LOCATION_STORAGE_KEY,
   MORE,
-  VEHICLE_INFO,
+  NEW_CAR_MENU,
+  RC_DETAILS,
 } from "@/lib/nav";
 import { Logo } from "@/components/common/Logo";
 import { NavDropdown } from "@/components/nav/NavDropdown";
@@ -28,9 +29,14 @@ import { useAuth } from "@/services/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+/**
+ * Top navigation groups. The label is the centered trigger; the items are the
+ * dropdown contents. Contact Us stays a direct link (below).
+ */
 const DROPDOWN_GROUPS = [
-  { label: "Vehicle Info", items: VEHICLE_INFO },
+  { label: "RC Details", items: RC_DETAILS },
   { label: "Buy Car", items: BUY_CAR },
+  { label: "New Car", items: NEW_CAR_MENU },
   { label: "Insurance", items: INSURANCE },
   { label: "More", items: MORE },
 ];
@@ -48,6 +54,13 @@ function readLocation(): string {
   }
 }
 
+/** Shared underline style for plain navbar links (Contact Us). */
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    "inline-flex items-center border-b-2 border-transparent px-3 py-2 text-sm font-medium transition-colors hover:border-primary hover:text-[hsl(var(--on-dark))]",
+    isActive && "border-primary text-primary"
+  );
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,8 +71,7 @@ export function Navbar() {
   const locationTimer = useRef<number | null>(null);
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
-  const locationHook = useLocation();
-  const pathname = locationHook.pathname;
+  const { pathname } = useLocation();
 
   useEffect(
     () => () => {
@@ -148,18 +160,19 @@ export function Navbar() {
     <header
       ref={headerRef}
       className={cn(
-        "sticky top-0 z-50 w-full border-b bg-[hsl(var(--surface-dark))] text-[hsl(var(--on-dark))] transition-shadow duration-300",
+        "sticky top-0 z-50 w-full border-b border-white/10 bg-[hsl(var(--surface-dark))] text-[hsl(var(--on-dark))] transition-shadow duration-300",
         scrolled && "shadow-lg"
       )}
     >
-      {/* ============ Row 1: main bar ============ */}
-      <div className="border-b border-white/10">
-        <nav
-          className="mx-auto flex h-16 max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8"
-          aria-label="Main navigation"
-        >
-          {/* Brand */}
-          <Link to="/" className="mr-3 flex items-center" aria-label={`${SITE.name} home`}>
+      {/* Three-column grid: [1fr] logo+location · [auto] nav · [1fr] search+profile.
+          Equal 1fr sides keep the center column perfectly centered in the navbar. */}
+      <nav
+        className="mx-auto grid h-20 w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-6 sm:px-8"
+        aria-label="Main navigation"
+      >
+        {/* LEFT: logo + location */}
+        <div className="flex min-w-0 items-center justify-self-start">
+          <Link to="/" className="mr-2 flex shrink-0 items-center" aria-label={`${SITE.name} home`}>
             <Logo size="sm" />
             <span className="sr-only">{SITE.name}</span>
           </Link>
@@ -167,7 +180,7 @@ export function Navbar() {
           {/* Location selector */}
           <div
             id="location-selector"
-            className="relative hidden xl:block"
+            className="relative hidden lg:block"
             onMouseEnter={openLocation}
             onMouseLeave={closeLocationSoon}
           >
@@ -183,9 +196,12 @@ export function Navbar() {
               )}
             >
               <MapPin className="h-4 w-4 text-primary" aria-hidden />
-              <span className="max-w-[7rem] truncate">{location}</span>
+              <span className="max-w-[6.5rem] truncate">{location}</span>
               <ChevronDown
-                className={cn("h-3.5 w-3.5 transition-transform duration-200", locationOpen && "rotate-180")}
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform duration-200",
+                  locationOpen && "rotate-180"
+                )}
                 aria-hidden
               />
             </button>
@@ -199,6 +215,9 @@ export function Navbar() {
                   className="absolute left-0 top-full z-50 pt-2"
                 >
                   <div className="w-56 rounded-lg border border-border bg-popover p-1.5 text-popover-foreground shadow-lg">
+                    <p className="px-2.5 pb-1 pt-1 text-xs font-medium text-muted-foreground">
+                      📍 Select Location
+                    </p>
                     <div className="relative">
                       <Search
                         className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
@@ -242,66 +261,27 @@ export function Navbar() {
               )}
             </AnimatePresence>
           </div>
+        </div>
 
-          {/* Desktop dropdowns */}
-          <div className="hidden items-center lg:flex">
-            {DROPDOWN_GROUPS.slice(0, 2).map((group) => (
-              <NavDropdown
-                key={group.label}
-                label={group.label}
-                items={group.items}
-                active={pathActive(
-                  pathname,
-                  group.items.map((i) => i.to)
-                )}
-              />
-            ))}
-            <NavLink
-              to="/new-cars"
-              className={({ isActive }) =>
-                cn(
-                  "inline-flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-white/5 text-primary"
-                    : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
-                )
-              }
-            >
-              New Car
-            </NavLink>
-            {DROPDOWN_GROUPS.slice(2).map((group) => (
-              <NavDropdown
-                key={group.label}
-                label={group.label}
-                items={group.items}
-                active={pathActive(
-                  pathname,
-                  group.items.map((i) => i.to)
-                )}
-              />
-            ))}
-            <NavLink
-              to="/contact"
-              className={({ isActive }) =>
-                cn(
-                  "hidden items-center rounded-md px-3 py-2 text-sm font-medium transition-colors xl:inline-flex",
-                  isActive
-                    ? "bg-white/5 text-primary"
-                    : "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
-                )
-              }
-            >
-              Contact Us
-            </NavLink>
-          </div>
+        {/* CENTER: navigation — kept truly centered by the equal 1fr grid columns */}
+        <div className="hidden items-center justify-self-center lg:flex">
+          {DROPDOWN_GROUPS.map((group) => (
+            <NavDropdown
+              key={group.label}
+              label={group.label}
+              items={group.items}
+              active={pathActive(pathname, group.items.map((i) => i.to))}
+            />
+          ))}
+          <NavLink to="/contact" className={navLinkClass}>
+            Contact Us
+          </NavLink>
+        </div>
 
-          {/* Desktop search — expands on hover, collapses on leave */}
-          <NavSearch
-            mode="icon"
-            className="ml-auto hidden lg:block"
-          />
+        {/* RIGHT: search + profile + mobile toggle */}
+        <div className="flex items-center justify-self-end">
+          <NavSearch mode="icon" className="hidden lg:block" />
 
-          {/* User / account menu — opens on hover, same as other dropdowns */}
           {isAuthenticated && user ? (
             <NavDropdown
               label="Account"
@@ -311,7 +291,7 @@ export function Navbar() {
                   {user.name.charAt(0).toUpperCase()}
                 </span>
               }
-              triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
+              triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] lg:inline-flex"
               align="right"
               header={
                 <div className="min-w-0">
@@ -332,7 +312,7 @@ export function Navbar() {
               label="Account"
               ariaLabel="Account menu"
               trigger={<User className="h-5 w-5" />}
-              triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] md:inline-flex"
+              triggerClassName="ml-1 hidden h-9 w-9 p-0 text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))] lg:inline-flex"
               align="right"
               items={[
                 { label: "Log in", to: "/login" },
@@ -352,10 +332,10 @@ export function Navbar() {
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-        </nav>
-      </div>
+        </div>
+      </nav>
 
-      {/* ============ Mobile menu panel ============ */}
+      {/* ============ Mobile drawer ============ */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -363,10 +343,10 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="border-b border-white/10 bg-[hsl(var(--surface-dark))] lg:hidden"
+            className="border-t border-white/10 bg-[hsl(var(--surface-dark))] lg:hidden"
           >
             <div className="flex flex-col gap-5 px-4 py-5">
-              {/* Search (mobile only) */}
+              {/* Search */}
               <div>
                 <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[hsl(var(--on-dark-soft))]">
                   Search vehicle
@@ -426,21 +406,8 @@ export function Navbar() {
                 </div>
               ))}
 
-              {/* New Car + Contact + auth */}
+              {/* Contact + auth */}
               <div className="border-t border-white/10 pt-4">
-                <NavLink
-                  to="/new-cars"
-                  className={({ isActive }) =>
-                    cn(
-                      "block rounded-md px-2 py-2 text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-white/10 text-primary"
-                        : "text-[hsl(var(--on-dark))] hover:bg-white/5 hover:text-primary"
-                    )
-                  }
-                >
-                  New Car
-                </NavLink>
                 <NavLink
                   to="/contact"
                   className={({ isActive }) =>
@@ -460,14 +427,14 @@ export function Navbar() {
                       <Button
                         variant="outline"
                         onClick={() => navigate("/history")}
-                        className="border-white/15 bg-transparent text-[hsl(var(--on-dark))] hover:bg-white/5"
+                        className="w-full border-white/15 bg-transparent text-[hsl(var(--on-dark))] hover:bg-white/5"
                       >
                         <History className="h-4 w-4" /> Search History
                       </Button>
                       <Button
                         variant="ghost"
                         onClick={logout}
-                        className="text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
+                        className="w-full text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]"
                       >
                         <LogOut className="h-4 w-4" /> Log out ({user?.name})
                       </Button>
@@ -477,11 +444,16 @@ export function Navbar() {
                       <Button
                         variant="outline"
                         onClick={() => navigate("/login")}
-                        className="border-white/15 bg-transparent text-[hsl(var(--on-dark))] hover:bg-white/5"
+                        className="w-full border-white/15 bg-transparent text-[hsl(var(--on-dark))] hover:bg-white/5"
                       >
                         Log in
                       </Button>
-                      <Button onClick={() => navigate("/signup")}>Sign up</Button>
+                      <Button
+                        onClick={() => navigate("/signup")}
+                        className="w-full"
+                      >
+                        Sign up
+                      </Button>
                     </>
                   )}
                 </div>

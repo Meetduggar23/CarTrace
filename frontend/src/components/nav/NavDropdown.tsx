@@ -140,9 +140,9 @@ export function NavDropdown({
         className={cn(
           trigger
             ? "inline-flex items-center justify-center rounded-full transition-colors"
-            : "group inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-          "text-[hsl(var(--on-dark-soft))] hover:bg-white/5 hover:text-[hsl(var(--on-dark))]",
-          (open || active) && "bg-white/5 text-primary",
+            : "group inline-flex items-center gap-1 border-b-2 border-transparent px-3 py-2 text-sm font-medium transition-colors",
+          "text-[hsl(var(--on-dark-soft))] hover:border-primary hover:text-[hsl(var(--on-dark))]",
+          (open || active) && "border-primary text-primary",
           triggerClassName
         )}
       >

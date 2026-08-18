@@ -44,8 +44,9 @@ describe("Navbar", () => {
     render(<Navbar />);
     expect(screen.getByText("CarTrace")).toBeInTheDocument();
     // Top-level dropdown triggers + primary links
-    expect(screen.getByRole("button", { name: /vehicle info/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /rc details/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /buy car/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /new car/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /insurance/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /more/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /contact us/i })).toBeInTheDocument();

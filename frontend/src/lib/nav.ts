@@ -35,19 +35,22 @@ export interface NavDropdownItem {
   description?: string;
 }
 
-export const VEHICLE_INFO: NavDropdownItem[] = [
-  { label: "RC Details", to: "/vehicle", description: "Registration details by number plate" },
-  { label: "Challan Search", to: "/challan", description: "Check traffic challans" },
+export const RC_DETAILS: NavDropdownItem[] = [
+  { label: "Vehicle Registration", to: "/vehicle", description: "Check details by registration number" },
   { label: "VIN Decoder", to: "/vin-decoder", description: "Decode a 17-character VIN" },
-  { label: "Vehicle Specifications", to: "/vehicle", description: "Make, model, engine & specs" },
   { label: "RTO Information", to: "/rto", description: "RTO codes, offices & cities" },
-  { label: "Service History", to: "/service-history", description: "Track vehicle service records" },
+  { label: "Challan Search", to: "/challan", description: "Check traffic challans" },
 ];
 
 export const BUY_CAR: NavDropdownItem[] = [
   { label: "New Cars", to: "/new-cars", description: "Explore brand-new vehicles" },
   { label: "Used Cars", to: "/used-cars", description: "Browse pre-owned vehicles" },
   { label: "Compare Cars", to: "/compare", description: "Compare vehicles side-by-side" },
+];
+
+export const NEW_CAR_MENU: NavDropdownItem[] = [
+  { label: "Latest Cars", to: "/new-cars", description: "Newest arrivals" },
+  { label: "Car Specifications", to: "/vehicle", description: "Detailed vehicle specifications" },
 ];
 
 export const INSURANCE: NavDropdownItem[] = [
@@ -58,11 +61,10 @@ export const INSURANCE: NavDropdownItem[] = [
 
 export const MORE: NavDropdownItem[] = [
   { label: "FASTag", to: "/fastag", description: "Toll payments & FASTag info" },
-  { label: "RTO Directory", to: "/rto", description: "Browse all RTO offices" },
+  { label: "Service History", to: "/service-history", description: "Track vehicle service records" },
   { label: "Saved Vehicles", to: "/saved", description: "Your saved vehicles" },
   { label: "Search History", to: "/history", description: "Recent lookups" },
   { label: "About", to: "/about", description: "About & disclaimer" },
-  { label: "Help", to: "/help", description: "Frequently asked questions" },
 ];
 
 /** Locations offered by the navbar location selector. */
