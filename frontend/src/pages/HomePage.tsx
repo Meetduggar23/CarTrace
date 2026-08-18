@@ -192,7 +192,7 @@ export function HomePage() {
       </section>
 
       {/* Floating search card — overlaps the bottom of the hero */}
-      <div className="relative z-10 mx-auto -mt-20 w-[calc(100%-2.5rem)] max-w-[1000px] sm:-mt-24 lg:-mt-28">
+      <div className="relative z-10 mx-auto -mt-20 w-[calc(100%-2.5rem)] max-w-[1180px] sm:-mt-24 lg:-mt-28">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}

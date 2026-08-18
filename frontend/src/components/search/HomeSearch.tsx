@@ -53,9 +53,9 @@ export function HomeSearch() {
       <div
         role="tablist"
         aria-label="Vehicle services"
-        className="w-full max-w-full overflow-x-auto px-6"
+        className="w-full max-w-full overflow-x-auto px-2"
       >
-        <div className="flex min-w-full items-stretch border-b border-border">
+        <div className="flex items-stretch border-b border-border">
           {FEATURES.map((feature, i) => {
             const isActive = active === feature.href;
             return (
@@ -89,7 +89,7 @@ export function HomeSearch() {
                   }
                 }}
                 className={cn(
-                  "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-2.5 py-3 text-sm font-medium transition-colors",
+                  "flex shrink-0 items-center gap-1 whitespace-nowrap border-b-2 px-2.5 py-3 text-sm font-medium transition-colors",
                   isActive
                     ? "border-primary bg-primary/5 text-primary"
                     : "border-transparent text-muted-foreground hover:bg-primary/5 hover:text-foreground"
